@@ -6,6 +6,8 @@ exports.createUser = (req, res, next) => {     //router.post to use request of p
   bcrypt.hash(req.body.password, 10)
     .then(hash => {
       const user = new User({
+        firstName:req.body.firstName,
+        lastName:req.body.lastName,
         email: req.body.email,
         password: hash,
       })
