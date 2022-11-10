@@ -19,11 +19,12 @@ import { FormHelperText, MenuItem, Select, InputLabel, FormControl } from '@mui/
 import { useState } from 'react';
 import axios from 'axios';
 import apiUrl from '../../environment/enviroment';
-import { useNavigate } from 'react-router-dom';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import * as moment from 'moment'
+import { useAuth } from '../../authentication/AuthProvider';
+
 const schema = yup.object().shape({
     firstName: yup.string().required('First Name is required').min(5, 'Atleast 5 charcaters are requuired'),
     lastName: yup.string().required('Last Name is required').min(5, 'Atleast 5 charcaters are requuired'),
@@ -35,11 +36,11 @@ const schema = yup.object().shape({
 }).required();
 const theme = createTheme();
 export default function SignUp() {
+    const { login } = useAuth()
     const { register, handleSubmit, control, formState: { errors } } = useForm({
         mode: "all",
         resolver: yupResolver(schema)
     });
-    const navigate = useNavigate()
     const [apiResponse, setApiResponse] = useState(null)
     function onSubmit(formData) {
         formData['dob'] = moment(formData['dob']).format('YYYY-MM-DD')
@@ -49,7 +50,7 @@ export default function SignUp() {
             .then((response) => {
                 console.log('backend repsonse', response);
                 setApiResponse(response.data)
-                navigate('/dashboard')
+                login(response.data.data)
             })
             .catch(function (error) {
                 console.log('Backend Not Responsed', error);

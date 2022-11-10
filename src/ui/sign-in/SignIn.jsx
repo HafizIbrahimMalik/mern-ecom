@@ -27,27 +27,25 @@ const theme = createTheme();
 
 
 export default function SignIn() {
-
+    const navigate = useNavigate()
+    const { login } = useAuth()
+    const [apiResponse, setApiResponse] = useState(null)
     const { register, handleSubmit, formState: { errors } } = useForm({
         mode: "all",
         resolver: yupResolver(schema)
     });
-    const { login } = useAuth()
 
-    const [apiResponse, setApiResponse] = useState(null)
     function onSubmit(formData) {
         axios.post(`${apiUrl.baseUrl}/user/login`, {
             ...formData
         })
             .then((response) => {
-                setApiResponse(response.data)
-                login(response.data)
+                login(response.data.data)
             })
             .catch(function (error) {
                 setApiResponse(error.response?.data)
             });
     }
-    const navigate = useNavigate()
 
     return (
         <>
@@ -110,9 +108,9 @@ export default function SignIn() {
                                 sx={{ mt: 3, mb: 2 }}>
                                 Sign In
                             </Button>
-                            
+
                         </Box>
-                    </Box><Typography  component="p"  sx={{color:"blue" , wl:20 ,cursor:"pointer",width: "fit-content", ml:"auto" ,textDecoration:"underline"}} onClick={() => navigate('/sign-up')}>Sign Up</Typography>
+                    </Box><Typography component="p" sx={{ color: "blue", wl: 20, cursor: "pointer", width: "fit-content", ml: "auto", textDecoration: "underline" }} onClick={() => navigate('/sign-up')}>Sign Up</Typography>
                 </Container>
             </ThemeProvider>
         </>
