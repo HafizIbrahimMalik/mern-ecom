@@ -10,19 +10,19 @@ exports.createUser = (req, res, next) => {     //router.post to use request of p
         lastName: req.body.lastName,
         email: req.body.email,
         password: hash,
-        dob: req.body.dob,
+        dob: req.body.dob ? req.body.dob : null,
       })
       user.save().then(createdUser => {   //get results after saving so we can send newly generated post id to frotnend
         res.status(201).json({   //we can send status codes as here we are sending 201 that resource is addedd successfully
           message: 'User added successfully',
-          result: createdUser,
+          data: createdUser,
           success: true
         })
       })
         .catch(err => {
           res.status(500).json({   //we can send status codes as here we are sending 500 that is server side error
             message: 'This Email is already Taken. Please try different',
-            error: err,
+            error: err.errors,
             success: false
           })
         })
