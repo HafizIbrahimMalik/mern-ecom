@@ -12,30 +12,37 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
-import { FormHelperText } from '@mui/material';
+import { FormHelperText, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import { useState } from 'react';
 import axios from 'axios';
 import apiUrl from '../../environment/enviroment';
 import { useNavigate } from 'react-router-dom';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import * as moment from 'moment'
 const schema = yup.object().shape({
     firstName: yup.string().required('First Name is required').min(5, 'Atleast 5 charcaters are requuired'),
     lastName: yup.string().required('Last Name is required').min(5, 'Atleast 5 charcaters are requuired'),
     email: yup.string().required().email(),
     password: yup.string().required().min(5),
-    checkbox: yup.boolean("valkye should be boolean").oneOf([true], "Required terms of use").required("checkbox i srequired")
+    checkbox: yup.boolean("value should be boolean").oneOf([true], "Required terms of use").required("checkbox is required"),
+    role: yup.string().required(),
+    dob: yup.string().required()
 }).required();
 const theme = createTheme();
 export default function SignUp() {
-    const { register, handleSubmit, getValues, formState: { errors } } = useForm({
+    const { register, handleSubmit, control, formState: { errors } } = useForm({
         mode: "all",
         resolver: yupResolver(schema)
     });
     const navigate = useNavigate()
     const [apiResponse, setApiResponse] = useState(null)
     function onSubmit(formData) {
+        formData['dob'] = moment(formData['dob']).format('YYYY-MM-DD')
         axios.post(`${apiUrl.baseUrl}/user/signup`, {
             ...formData
         })
@@ -102,7 +109,45 @@ export default function SignUp() {
 
                                 />
                             </Grid>
-
+                            <Grid item xs={12} sm={6}>
+                                <FormControl fullWidth>
+                                    <InputLabel id="demo-simple-select-label">Role</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        defaultValue='buyer'
+                                        label="Role"
+                                        error={!errors.role?.type ? false : true}
+                                        {...register("role")}
+                                    >
+                                        <MenuItem value='admin'>Admin</MenuItem>
+                                        <MenuItem value='seller'>Seller</MenuItem>
+                                        <MenuItem value='buyer'>Buyer</MenuItem>
+                                    </Select>
+                                    <FormHelperText error>{errors.role?.message}</FormHelperText>
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <Controller
+                                    control={control}
+                                    name="dob"
+                                    defaultValue=""
+                                    render={({ field }) =>
+                                        < LocalizationProvider dateAdapter={AdapterDayjs}>
+                                            <DatePicker
+                                                {...field}
+                                                label="Date of birth"
+                                                renderInput={(params) =>
+                                                    <TextField
+                                                        {...params}
+                                                        error={!errors.dob?.type ? false : true}
+                                                        helperText={errors.dob?.message}
+                                                    />}
+                                            />
+                                        </LocalizationProvider>
+                                    }
+                                />
+                            </Grid>
                             <Grid item xs={12}>
                                 <TextField
                                     error={!errors.email?.type ? false : true}

@@ -13,7 +13,7 @@ import apiUrl from '../../environment/enviroment'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../sidebar/Sidebar"
+import Navbar from '../navbar/Navbar';
 
 export default function Posts() {
   const [apiResponse, setApiResponse] = useState(null)
@@ -62,7 +62,7 @@ export default function Posts() {
 
   return (
     <>
-      <Sidebar />
+            <Navbar />
       <TableContainer component={Paper} sx={{ width: "60%", margin: "auto", marginTop: 10 }}>
         <Table>
           <TableHead>

@@ -5,13 +5,13 @@ import { useAuth } from '../../authentication/AuthProvider';
 import { useNavigate } from "react-router-dom";
 import { Fab, Tooltip } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import Sidebar from '../sidebar/Sidebar';
+import Navbar from '../navbar/Navbar';
 export default function Dashboard() {
   const { logout } = useAuth()
   const navigate = useNavigate()
   return (
     <>
-      <Sidebar />
+      <Navbar />
       <Stack width="50%" sx={{ mt: 20 }} margin="auto">
         <Button sx={{ width: "20%", p: 2, margin: "auto" }} variant="contained" onClick={() => navigate('/create-post')}>Create Post</Button>
         <Button sx={{ width: "20%", p: 2, margin: "auto" }} variant="text" onClick={() => navigate('/posts')}>Posts</Button>

@@ -35,12 +35,11 @@ export default function SignIn() {
   const [imageFile, setImageFile] = useState();
   const [selectedImage, setSelectedImage] = useState(null);
   const inputFileRef = useRef(null);
-  const [apiResponse, setApiResponse] = useState(null);
+  const [, setApiResponse] = useState(null);
   const navigate = useNavigate()
-  const [postData, setPostData] = useState(null);
-  let [searchParams, setSearchParams] = useSearchParams();
+  const [, setPostData] = useState(null);
+  let [searchParams] = useSearchParams();
   const {
-    register,
     handleSubmit,
     setValue,
     control,
@@ -70,8 +69,8 @@ export default function SignIn() {
           setApiResponse(error.response.data);
         });
     }
-  }, [])
-
+  },
+  )
   function onSubmit(formData) {
     let fData = new FormData();
     fData.append("id", formData.id);
