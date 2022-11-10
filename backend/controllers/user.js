@@ -98,7 +98,7 @@ exports.userLogin = (req, res, next) => {
     }
     return bcrypt.compare(req.body.password, user.password)   //as we cant dcrypt the encrypted password that we stored in database we can compare by making hash to requested pasword with database password
   })
-    .then(result => {
+    .then(async result => {
       if (!result) {
         throw {   //we can send status codes as here we are sending 404 that is resource you are looking for is not found
           message: 'Please make sure your credentials are correct',
@@ -110,12 +110,22 @@ exports.userLogin = (req, res, next) => {
       const token = jwt.sign({ email: fetechedUser.email, userId: fetechedUser._id },
         process.env.JWT_KEY,
         { expiresIn: '1h' })  //user first argument AS DATA WHICH NEEDED TO BE IN TOKEN And 2nd argument is secret key its just for development to make string hash
+      let userTypeData = null
+      if (fetechedUser.role === 'buyer') {
+        userTypeData = await BuyerUser.findOne({ email: req.body.email })
+      } else {
+        userTypeData = await SellerUser.findOne({ email: req.body.email })
+      }
+      const dataToReturn = {
+        id: fetechedUser._id,
+        email: fetechedUser.email,
+        token: token,
+        [fetechedUser.role]: userTypeData
+      }
       res.status(200).json({   //we can send status codes as here we are sending 201 that resource is addedd successfully
         message: 'Signin Successfull',
         data: {
-          token: token,
-          expiresIn: 3600,
-          userId: fetechedUser._id,
+          ...dataToReturn
         },
         success: true
       })
