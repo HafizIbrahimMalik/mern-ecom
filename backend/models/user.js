@@ -7,6 +7,7 @@ const userSchema = mongoose.Schema({
   lastName: { type: String },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  dob: { type: Date, min: '1950-01-01', max: new Date() },
 })
 userSchema.plugin(uniqueValidator)    //mongoose have specail function called plugin() where you can plugin your more library regarding to moogose by installing them in or case it unique validator
 module.exports = mongoose.model('User', userSchema)

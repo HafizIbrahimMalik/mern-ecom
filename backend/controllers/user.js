@@ -6,10 +6,11 @@ exports.createUser = (req, res, next) => {     //router.post to use request of p
   bcrypt.hash(req.body.password, 10)
     .then(hash => {
       const user = new User({
-        firstName:req.body.firstName,
-        lastName:req.body.lastName,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
         email: req.body.email,
         password: hash,
+        dob: req.body.dob,
       })
       user.save().then(createdUser => {   //get results after saving so we can send newly generated post id to frotnend
         res.status(201).json({   //we can send status codes as here we are sending 201 that resource is addedd successfully
