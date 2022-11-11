@@ -10,33 +10,41 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
+import { FormHelperText } from '@mui/material';
 import apiUrl from '../../environment/enviroment'
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Stack } from '@mui/material';
+import { PhotoCamera } from '@mui/icons-material';
 import Navbar from '../navbar/Navbar';
 const schema = yup
   .object()
   .shape({
     id: yup.string(),
-    name: yup.string().required(),
-    shortName: yup.string().required(),
-    description: yup.string().min(5).required(),
+    title: yup.string().required(),
+    image: yup.mixed().required("required"),
+    content: yup.string().min(5).required(),
   })
   .required();
 
 const theme = createTheme();
 
-export default function CreateProductCategories() {
+
+export default function CreateProduct() {
+  const [imageFile, setImageFile] = useState();
+  const [selectedImage, setSelectedImage] = useState(null);
+  const inputFileRef = useRef(null);
   const [apiResponse, setApiResponse] = useState(null);
   const navigate = useNavigate()
-  const [, setProductData] = useState(null);
-  let [searchParams] = useSearchParams();
+  const [postData, setPostData] = useState(null);
+  let [searchParams, setSearchParams] = useSearchParams();
   const {
+    register,
     handleSubmit,
     setValue,
     control,
+    clearErrors,
     formState: { errors },
   } = useForm({
     mode: "all",
@@ -46,35 +54,46 @@ export default function CreateProductCategories() {
   useEffect(() => {
     if (searchParams.get('id')) {
       axios
-        .get(`${apiUrl.baseUrl}/productCategories`, +searchParams.get('id'))
+        .get(`${apiUrl.baseUrl}/posts`, +searchParams.get('id'))
         .then((response) => {
           console.log(response)
-          setProductData({ ...response.data.data[0] })
-          setValue("name", response.data.data[0].name);
-          setValue("shortName", response.data.data[0].shortName);
-          setValue("description", response.data.data[0].description);
-          setValue("id", response.data.data[0]._id);
+          setPostData({ ...response.data.posts[0] })
+          setSelectedImage(response.data.posts[0].imagePath)
+          setImageFile(response.data.posts[0].imagePath)
+          setValue("image", response.data.posts[0].imagePath);
+          setValue("title", response.data.posts[0].title);
+          setValue("content", response.data.posts[0].content);
+          setValue("id", response.data.posts[0]._id);
         })
         .catch(function (error) {
           console.log(error);
           setApiResponse(error.response.data);
         });
-    }},[]
-  )
+    }
+  }, [])
+
   function onSubmit(formData) {
+    let fData = new FormData();
+    fData.append("id", formData.id);
+    fData.append("image", imageFile);
+    fData.append("title", formData.title);
+    fData.append("content", formData.content);
     if (searchParams.get('id')) {
-      editData(formData, searchParams.get('id'))
+      if (typeof imageFile === 'string') {
+        editData(formData, searchParams.get('id'))
+      } else {
+        editData(fData, searchParams.get('id'))
+      }
     } else {
-      addData(formData)
+      addData(fData)
     }
   }
-
   function addData(fData) {
     axios
-      .post(`${apiUrl.baseUrl}/productCategories`, fData)
+      .post(`${apiUrl.baseUrl}/posts`, fData)
       .then((response) => {
         setApiResponse(response.data);
-        navigate('/product-categories')
+        navigate('/posts')
       })
       .catch(function (error) {
         console.log(error);
@@ -84,17 +103,31 @@ export default function CreateProductCategories() {
 
   function editData(fData, id) {
     axios
-      .put(`${apiUrl.baseUrl}/productCategories/${id}`, fData)
+      .put(`${apiUrl.baseUrl}/posts/${id}`, fData)
       .then((response) => {
         setApiResponse(response.data);
-        navigate('/product-categories')
+        navigate('/posts')
       })
       .catch(function (error) {
         console.log(error);
         setApiResponse(error.response.data);
       });
   }
-  console.log(apiResponse);
+
+  function handleImageChange(event) {
+    if (event.target.files && event.target.files[0]) {
+      let reader = new FileReader();
+      reader.readAsDataURL(event.target.files[0]);
+
+      reader.onload = (e) => {
+        setSelectedImage(e.target.result);
+      };
+
+      setImageFile(event.target.files[0]);
+      setValue("image", event.target.files[0]);
+      clearErrors('image')
+    }
+  }
 
   return (
     <>
@@ -111,25 +144,30 @@ export default function CreateProductCategories() {
             }}
           >
             <Typography component="h1" variant="h5">
-              {<b>{searchParams.get('id') ? 'Update' : 'Add'} Product Category</b>
-              }
-
-
+              <b>ADD PRODUCT</b>
             </Typography>
+            <input
+              type="file"
+              hidden
+              ref={inputFileRef}
+              onChange={handleImageChange} />
+            <div style={{ maxWidth: 400, margin: "auto" }}>
+              <img style={{ width: "100%" }} src={selectedImage} alt="" />
+            </div>
             <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3 }}>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <Controller
                     control={control}
-                    name="name"
+                    name="title"
                     defaultValue=""
                     render={({ field }) => (
                       <TextField
-                        error={!errors.name?.type ? false : true}
-                        helperText={errors.name?.message}
+                        error={!errors.title?.type ? false : true}
+                        helperText={errors.title?.message}
                         {...field}
                         fullWidth
-                        label="Name"
+                        label="Title"
                       />
                     )}
 
@@ -138,48 +176,41 @@ export default function CreateProductCategories() {
                 <Grid item xs={12}>
                   <Controller
                     control={control}
-                    name="shortName"
+                    name="content"
                     defaultValue=""
                     render={({ field }) => (
                       <TextField
-                        error={!errors.shortName?.type ? false : true}
-                        helperText={errors.shortName?.message}
+                        error={!errors.content?.type ? false : true}
+                        helperText={errors.content?.message}
                         {...field}
                         fullWidth
-                        label="Short Name"
-                      />
-                    )} />
-                </Grid>
-                <Grid item xs={12}>
-                  <Controller
-                    control={control}
-                    name="description"
-                    defaultValue=""
-                    render={({ field }) => (
-                      <TextField
-                        error={!errors.description?.type ? false : true}
-                        helperText={errors.description?.message}
-                        {...field}
-                        fullWidth
-                        label="Description"
+                        label="content"
                       />
                     )} />
                 </Grid>
               </Grid>
               <Button
+                fullWidth
+                onClick={() => inputFileRef?.current.click()}
+                sx={{ mt: 3, mb: 2 }}>
+                Upload
+                <PhotoCamera sx={{ ml: 5 }} color='primary' />
+              </Button>
+
+              <FormHelperText error>{errors.image?.message}</FormHelperText>
+              <Button
                 onClick={handleSubmit}
                 type="submit"
                 fullWidth
-                sx={{ mt: 3, mb: 2 }}
                 variant="contained">
-                {searchParams.get('id') ? 'Update' : 'Add'}
+                Post
               </Button>
               <Stack>
                 <Button type="button"
                   variant="outlined"
-                  sx={{ mb: 2 }}
-                  onClick={() => navigate('/product-categories')}>
-                  Product Categories
+                  sx={{ mt: 3, mb: 2 }}
+                  onClick={() => navigate('/posts')}>
+                  Go to Post
                 </Button>
               </Stack>
 

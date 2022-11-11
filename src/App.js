@@ -8,6 +8,8 @@ import ApiInterceptor from './interceptors/ApiInterceptor';
 import Dashboard from "./students/dashboard/Dashboard";
 import ProductCategories from "./students/productcategories/ProductCategories";
 import CreateProductCategories from "./students/Create-product-categories/CreateProductCategories"
+import CreateProduct from "./students/create-product/CreateProduct";
+import Product from "./students/product/Product";
 function App() {
   return (
     <>
@@ -38,10 +40,26 @@ function App() {
                 }
               />
               <Route
-              path="/create-product"
+              path="/create-productCategories"
               element={
                 <ProtectedRoute>
                   <CreateProductCategories />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/create-product"
+              element={
+                <ProtectedRoute>
+                  <CreateProduct />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/product"
+              element={
+                <ProtectedRoute>
+                  <Product />
                 </ProtectedRoute>
               }
             />

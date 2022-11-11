@@ -13,9 +13,9 @@ export default function Dashboard() {
     <>
       <Navbar />
       <Stack width="50%" sx={{ mt: 20 }} margin="auto">
-        <Button sx={{ width: "20%", p: 2, margin: "auto" }} variant="contained" onClick={() => navigate('/create-post')}>Create Post</Button>
-        <Button sx={{ width: "20%", p: 2, margin: "auto" }} variant="text" onClick={() => navigate('/posts')}>Posts</Button>
-        <Button sx={{ width: "20%", mt: 5, margin: "auto" }} variant="outlined" onClick={logout}>logout</Button>
+        <Button sx={{ width: "30%", p: 2, margin: "auto" }} variant="contained" onClick={() => navigate('/product-categories')}>Product Category</Button>
+        <Button sx={{ width: "30%", p: 2, margin: "auto" }} color="secondary" variant="text" onClick={() => navigate('/create-productCategories')}>Create Product Categories</Button>
+        <Button sx={{ width: "30%", mt: 5, margin: "auto" }} variant="outlined" onClick={logout}>logout</Button>
         <Fab
           color="secondary"
           sx={{
@@ -23,7 +23,7 @@ export default function Dashboard() {
             bottom: (theme) => theme.spacing(2),
             right: (theme) => theme.spacing(2),
           }}
-          onClick={() => navigate('/create-post')}>
+          onClick={() => navigate('/create-productCategories')}>
           <Tooltip title="Create Post" placement="right-start">
             <AddIcon />
           </Tooltip>

@@ -13,20 +13,19 @@ import apiUrl from '../../environment/enviroment'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
-import Navbar from '../navbar/Navbar';
+import Sidebar from "../sidebar/Sidebar"
 
-export default function ProductCategories() {
+export default function Product() {
   const [apiResponse, setApiResponse] = useState(null)
   const [loadingData, setLoadingData] = useState(false)
 
-  function getProductList() {
+  function getPosts() {
     setLoadingData(true)
-    axios.get(`${apiUrl.baseUrl}/productCategories`)
+    axios.get(`${apiUrl.baseUrl}/posts`)
       .then((response) => {
         setApiResponse(response.data)
         setLoadingData(false)
         console.log(response.data)
-
       })
       .catch(function (error) {
         console.log(error);
@@ -35,18 +34,17 @@ export default function ProductCategories() {
       });
   }
 
-  useEffect(() => { getProductList() }, []
+  useEffect(() => { getPosts() }, []
   )
   const navigate = useNavigate()
-  function deleteproductCategories(i) {
-    axios.delete(`${apiUrl.baseUrl}/productCategories/${i}`)
+  function deletepost(i) {
+    axios.delete(`${apiUrl.baseUrl}/posts/${i}`)
       .then((response) => {
         setApiResponse(prevApiResponse => {
-          let filteredData = prevApiResponse.data.filter(item => item._id !== i)
-
+          let filteredData = prevApiResponse.posts.filter(item => item._id !== i)
           return {
             ...prevApiResponse,
-            data: [...filteredData]
+            posts: [...filteredData]
           }
         })
       })
@@ -55,63 +53,67 @@ export default function ProductCategories() {
         setApiResponse(error.response.data)
       });
   }
-  function editproductCategories(i) {
+  function editpost(i) {
     navigate({
-      pathname: '/create-productCategories',
+      pathname: '/create-post',
       search: `?id=${i}`
     })
   }
 
   return (
     <>
-      <Navbar />
-      <Stack sx={{ mt: 2 }}>
-        <Button sx={{}} width="maxContent" onClick={() => navigate('/create-productCategories')}>Create Product Category</Button>
-      </Stack>
-      <TableContainer component={Paper} sx={{ width: "60%", margin: "auto", marginTop: 1 }}>
+      <Sidebar />
+      <TableContainer component={Paper} sx={{ width: "60%", margin: "auto", marginTop: 10 }}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell >Name</TableCell>
-              <TableCell >Short Name</TableCell>
-              <TableCell >Descriptions</TableCell>
+              <TableCell>Image</TableCell>
+              <TableCell >Title</TableCell>
+              <TableCell >Content</TableCell>
               <TableCell align='center'>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {
-              apiResponse?.data.map((r) => {
+              apiResponse?.posts.map((r) => {
                 return <TableRow key={r._id}>
                   <TableCell>
-                    <Typography fontWeight="bold" component="h2">{r.name}</Typography>
+                    <div style={{width:200}}>
+                      <img style={{width:"100%"}} src={r.imagePath} alt="img" />
+                    </div>
                   </TableCell>
                   <TableCell>
-                    <Typography fontWeight="bold" component="h2">{r.shortName}</Typography>
+                    <Typography fontWeight="bold" component="h2">{r.title}</Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography fontWeight="bold" component="h2">{r.description}</Typography>
+                    <Typography fontWeight="bold" component="h2">{r.content}</Typography>
                   </TableCell>
                   <TableCell align="right">
                     <Stack align="center" display="block" flexDirection="row">
-                      <Button type="button" variant="text" onClick={() => { deleteproductCategories(r._id) }}>Delete</Button>
-                      <Button type="button" variant="text" onClick={() => { editproductCategories(r._id) }}>Update</Button>
+                      <Button type="button" variant="text" onClick={() => { deletepost(r._id) }}>Delete</Button>
+                      <Button type="button" variant="text" onClick={() => { editpost(r._id) }}>Edit</Button>
                     </Stack>
                   </TableCell>
                 </TableRow>
               })}
-            {!loadingData && !apiResponse?.data.length &&
-              <TableRow>
-                <TableCell sx={{ width: "50" }}>No  Data yet</TableCell>
+            {!loadingData && !apiResponse?.posts.length &&
+              <TableRow >
+                <TableCell sx={{ width: "50" }}>No Post yet</TableCell>
               </TableRow>
             }
-            {loadingData && !apiResponse?.data.length &&
-              <TableRow>
+            {loadingData && !apiResponse?.posts.length &&
+              <TableRow align="center">
                 <TableCell>Data is being Loading</TableCell>
               </TableRow>
             }
           </TableBody>
+
+
         </Table>
       </TableContainer>
+      <Stack sx={{mt:6}}>
+        <Button sx={{ width: 150,margin:"auto"  }}  onClick={() => navigate('/create-post')}>Create Post</Button>
+      </Stack>
     </>
   );
 }
