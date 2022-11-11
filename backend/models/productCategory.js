@@ -6,7 +6,7 @@ const productCategorySchema = mongoose.Schema({
   name: { type: String, required: true },
   shortName: { type: String, required: true },
   description: { type: String, required: true },
-  creator: { type: mongoose.Schema.Types.ObjectId,ref:"User",required:true },
+  creator: { type: mongoose.Schema.Types.ObjectId,ref:"User" },
 })
 productCategorySchema.plugin(uniqueValidator)    //mongoose have specail function called plugin() where you can plugin your more library regarding to moogose by installing them in or case it unique validator
 module.exports = mongoose.model('Product_Category', productCategorySchema)

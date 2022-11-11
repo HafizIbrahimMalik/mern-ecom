@@ -1,8 +1,6 @@
 const ProductCategory = require('../models/productCategory')
 
 exports.CreateProductCategory = (req, res, next) => {     //router.productCategory to use request of productCategories   ii) multer(storage).single('image')   this function mean we expect single file with property name image from frontnend
-   console.log('asd',req.body);
-   console.log('req.userData.userId',req.userData.userId);
     const productCategory = new ProductCategory({
         name: req.body.name,
         shortName: req.body.shortName,
@@ -16,8 +14,6 @@ exports.CreateProductCategory = (req, res, next) => {     //router.productCatego
             success: true
         })
     }).catch(err => {
-   console.log('asd',err);
-
         res.status(500).json({
             message: 'There comes some issues while creating productCategory',
             success: false
