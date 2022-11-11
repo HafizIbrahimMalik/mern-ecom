@@ -6,8 +6,10 @@ import { UnProtectedRoute } from './authentication/UnProtectedRoute';
 import { AuthProvider } from './authentication/AuthProvider';
 import ApiInterceptor from './interceptors/ApiInterceptor';
 import Dashboard from "./students/dashboard/Dashboard";
-import Posts from "./students/posts/Posts";
-import CreatePost from "./students/create-post/CreatePost";
+import ProductCategories from "./students/productcategories/ProductCategories";
+import CreateProductCategories from "./students/Create-product-categories/CreateProductCategories"
+import CreateProduct from "./students/create-product/CreateProduct";
+import Product from "./students/product/Product";
 function App() {
   return (
     <>
@@ -30,18 +32,34 @@ function App() {
                 }
               />
               <Route
-                path="/posts"
+                path="/product-categories"
                 element={
                   <ProtectedRoute>
-                    <Posts />
+                    <ProductCategories />
                   </ProtectedRoute>
                 }
               />
               <Route
-              path="/create-post"
+              path="/create-productCategories"
               element={
                 <ProtectedRoute>
-                  <CreatePost />
+                  <CreateProductCategories />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/create-product"
+              element={
+                <ProtectedRoute>
+                  <CreateProduct />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/product"
+              element={
+                <ProtectedRoute>
+                  <Product />
                 </ProtectedRoute>
               }
             />
