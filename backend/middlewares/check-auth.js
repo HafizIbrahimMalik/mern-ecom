@@ -13,7 +13,7 @@ module.exports = (req, res, next) => {
     res.status(401).json({   //we can send status codes as here we are sending 404 that is resource you are looking for is not found
       message: 'Auth Failed',
       error: 'Please signin',
-      success: fa
+      success: false
     })
   }
 }
