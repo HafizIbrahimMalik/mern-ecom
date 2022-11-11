@@ -47,7 +47,7 @@ exports.createUser = async (req, res, next) => {     //router.post to use reques
         userTypeCollectionData.save(opts).then(async createdUserType => {
           const token = jwt.sign({ email: createdUser.email, userId: createdUser._id },
             process.env.JWT_KEY,
-            { expiresIn: '1h' })  //user first argument AS DATA WHICH NEEDED TO BE IN TOKEN And 2nd argument is secret key its just for development to make string hash
+            { expiresIn: '24h' })  //user first argument AS DATA WHICH NEEDED TO BE IN TOKEN And 2nd argument is secret key its just for development to make string hash
           const dataToReturn = {
             token: token,
             id: createdUser._id,
@@ -72,7 +72,6 @@ exports.createUser = async (req, res, next) => {     //router.post to use reques
           })
       })
         .catch(async err => {
-          console.log('sadf', err);
           await session.abortTransaction();
           session.endSession();
           return res.status(500).json({   //we can send status codes as here we are sending 500 that is server side error
@@ -110,7 +109,7 @@ exports.userLogin = (req, res, next) => {
       }
       const token = jwt.sign({ email: fetechedUser.email, userId: fetechedUser._id },
         process.env.JWT_KEY,
-        { expiresIn: '1h' })  //user first argument AS DATA WHICH NEEDED TO BE IN TOKEN And 2nd argument is secret key its just for development to make string hash
+        { expiresIn: '24h' })  //user first argument AS DATA WHICH NEEDED TO BE IN TOKEN And 2nd argument is secret key its just for development to make string hash
       let userTypeData = null
       if (fetechedUser.role === 'buyer') {
         userTypeData = await BuyerUser.findOne({ email: req.body.email })
