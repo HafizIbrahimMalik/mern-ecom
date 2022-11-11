@@ -10,7 +10,7 @@ export default function Sidebar() {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
     const navigate = useNavigate()
     return (
-        <>
+        <div >
             <IconButton
                 onClick={() => setIsDrawerOpen(true)}
                 size='large'
@@ -35,6 +35,6 @@ export default function Sidebar() {
                     </Stack>
                 </Box>
             </Drawer>
-        </>
+        </div>
     )
 }
