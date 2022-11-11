@@ -3,7 +3,7 @@ const uniqueValidator = require('mongoose-unique-validator')    // npm i --save 
 
 
 const sellerUserSchema = mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   firstName: { type: String, required: true },
   lastName: { type: String },
   email: { type: String, required: true, unique: true },

@@ -29,7 +29,7 @@ exports.createUser = async (req, res, next) => {     //router.post to use reques
         let userTypeCollectionData = null
         if (req.body.role === 'buyer') {
           userTypeCollectionData = new BuyerUser({
-            userId: createdUser._id,
+            user: createdUser._id,
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             email: req.body.email,
@@ -37,7 +37,7 @@ exports.createUser = async (req, res, next) => {     //router.post to use reques
           })
         } else {
           userTypeCollectionData = new SellerUser({
-            userId: createdUser._id,
+            user: createdUser._id,
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             email: req.body.email,
@@ -49,9 +49,9 @@ exports.createUser = async (req, res, next) => {     //router.post to use reques
             process.env.JWT_KEY,
             { expiresIn: '1h' })  //user first argument AS DATA WHICH NEEDED TO BE IN TOKEN And 2nd argument is secret key its just for development to make string hash
           const dataToReturn = {
+            token: token,
             id: createdUser._id,
             email: createdUser.email,
-            token: token,
             [req.body.role]: createdUserType
           }
           await session.commitTransaction();
@@ -64,7 +64,7 @@ exports.createUser = async (req, res, next) => {     //router.post to use reques
           .catch(async err => {
             await session.abortTransaction();
             session.endSession();
-            return res.status(500).json({   //we can send status codes as here we are sending 500 that is server side error
+            throw res.status(500).json({   //we can send status codes as here we are sending 500 that is server side error
               message: 'Validation Errors',
               error: err.errors,
               success: false
@@ -72,6 +72,7 @@ exports.createUser = async (req, res, next) => {     //router.post to use reques
           })
       })
         .catch(async err => {
+          console.log('sadf', err);
           await session.abortTransaction();
           session.endSession();
           return res.status(500).json({   //we can send status codes as here we are sending 500 that is server side error
@@ -86,7 +87,7 @@ exports.createUser = async (req, res, next) => {     //router.post to use reques
 
 exports.userLogin = (req, res, next) => {
   let fetechedUser
-  User.findOne({ email: req.body.email }).then(user => {
+  User.findOne({ email: req.body.email }).select("+password").then(user => {
     fetechedUser = user
     if (!user) {
       throw {   //we can send status codes as here we are sending 404 that is resource you are looking for is not found
