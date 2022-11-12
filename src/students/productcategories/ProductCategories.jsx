@@ -21,7 +21,7 @@ export default function ProductCategories() {
 
   function getProductList() {
     setLoadingData(true)
-    axios.get(`${apiUrl.baseUrl}/productCategories`)
+    axios.get(`${apiUrl.baseUrl}/admin/productCategories`)
       .then((response) => {
         setApiResponse(response.data)
         setLoadingData(false)
@@ -39,7 +39,7 @@ export default function ProductCategories() {
   )
   const navigate = useNavigate()
   function deleteproductCategories(i) {
-    axios.delete(`${apiUrl.baseUrl}/productCategories/${i}`)
+    axios.delete(`${apiUrl.baseUrl}/admin/productCategories/${i}`)
       .then((response) => {
         setApiResponse(prevApiResponse => {
           let filteredData = prevApiResponse.data.filter(item => item._id !== i)
@@ -66,7 +66,7 @@ export default function ProductCategories() {
     <>
       <Navbar />
       <Stack sx={{ mt: 2 }}>
-        <Button sx={{}} width="maxContent" onClick={() => navigate('/create-productCategories')}>Create Product Category</Button>
+        <Button sx={{ width: "fit-content", marginLeft: "68%" }} onClick={() => navigate('/create-productCategories')}>Create Product Category</Button>
       </Stack>
       <TableContainer component={Paper} sx={{ width: "60%", margin: "auto", marginTop: 1 }}>
         <Table>

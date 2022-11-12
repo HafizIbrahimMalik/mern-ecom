@@ -15,16 +15,18 @@ import apiUrl from '../../environment/enviroment'
 import axios from "axios";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Stack } from '@mui/material';
+import { Stack, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import { PhotoCamera } from '@mui/icons-material';
 import Navbar from '../navbar/Navbar';
 const schema = yup
   .object()
   .shape({
     id: yup.string(),
-    title: yup.string().required(),
+    name: yup.string().required(),
+    shortName: yup.string().required(),
+    description: yup.string().min(5).required(),
+    productCategoryId: yup.string().required(),
     image: yup.mixed().required("required"),
-    content: yup.string().min(5).required(),
   })
   .required();
 
@@ -35,10 +37,10 @@ export default function CreateProduct() {
   const [imageFile, setImageFile] = useState();
   const [selectedImage, setSelectedImage] = useState(null);
   const inputFileRef = useRef(null);
-  const [apiResponse, setApiResponse] = useState(null);
+  const [, setApiResponse] = useState(null);
   const navigate = useNavigate()
-  const [postData, setPostData] = useState(null);
-  let [searchParams, setSearchParams] = useSearchParams();
+  const [, setPostData] = useState(null);
+  let [searchParams,] = useSearchParams();
   const {
     register,
     handleSubmit,
@@ -54,30 +56,34 @@ export default function CreateProduct() {
   useEffect(() => {
     if (searchParams.get('id')) {
       axios
-        .get(`${apiUrl.baseUrl}/posts`, +searchParams.get('id'))
+        .get(`${apiUrl.baseUrl}/admin/products`, +searchParams.get('id'))
         .then((response) => {
           console.log(response)
           setPostData({ ...response.data.posts[0] })
           setSelectedImage(response.data.posts[0].imagePath)
           setImageFile(response.data.posts[0].imagePath)
           setValue("image", response.data.posts[0].imagePath);
-          setValue("title", response.data.posts[0].title);
-          setValue("content", response.data.posts[0].content);
-          setValue("id", response.data.posts[0]._id);
+          setValue("name", response.data.data[0].name);
+          setValue("shortName", response.data.data[0].shortName);
+          setValue("description", response.data.data[0].description);
+          setValue("productCategoryId", response.data.data[0].productCategoryId);
         })
         .catch(function (error) {
           console.log(error);
           setApiResponse(error.response.data);
         });
     }
-  }, [])
+  },
+    []
+  )
 
   function onSubmit(formData) {
     let fData = new FormData();
-    fData.append("id", formData.id);
     fData.append("image", imageFile);
-    fData.append("title", formData.title);
-    fData.append("content", formData.content);
+    fData.append("name", formData.name);
+    fData.append("shortName", formData.shortName);
+    fData.append("description", formData.description);
+    fData.append("productCategoryId", formData.productCategoryId);
     if (searchParams.get('id')) {
       if (typeof imageFile === 'string') {
         editData(formData, searchParams.get('id'))
@@ -90,10 +96,10 @@ export default function CreateProduct() {
   }
   function addData(fData) {
     axios
-      .post(`${apiUrl.baseUrl}/posts`, fData)
+      .post(`${apiUrl.baseUrl}/admin/products`, fData)
       .then((response) => {
         setApiResponse(response.data);
-        navigate('/posts')
+        navigate('/products')
       })
       .catch(function (error) {
         console.log(error);
@@ -103,10 +109,10 @@ export default function CreateProduct() {
 
   function editData(fData, id) {
     axios
-      .put(`${apiUrl.baseUrl}/posts/${id}`, fData)
+      .put(`${apiUrl.baseUrl}/admin/products/${id}`, fData)
       .then((response) => {
         setApiResponse(response.data);
-        navigate('/posts')
+        navigate('/products')
       })
       .catch(function (error) {
         console.log(error);
@@ -144,7 +150,7 @@ export default function CreateProduct() {
             }}
           >
             <Typography component="h1" variant="h5">
-              <b>ADD PRODUCT</b>
+              {<b>{searchParams.get('id') ? 'Update' : 'Add'} Product</b>}
             </Typography>
             <input
               type="file"
@@ -159,15 +165,15 @@ export default function CreateProduct() {
                 <Grid item xs={12}>
                   <Controller
                     control={control}
-                    name="title"
+                    name="name"
                     defaultValue=""
                     render={({ field }) => (
                       <TextField
-                        error={!errors.title?.type ? false : true}
-                        helperText={errors.title?.message}
+                        error={!errors.name?.type ? false : true}
+                        helperText={errors.name?.message}
                         {...field}
                         fullWidth
-                        label="Title"
+                        label="Name"
                       />
                     )}
 
@@ -176,17 +182,55 @@ export default function CreateProduct() {
                 <Grid item xs={12}>
                   <Controller
                     control={control}
-                    name="content"
+                    name="shortName"
                     defaultValue=""
                     render={({ field }) => (
                       <TextField
-                        error={!errors.content?.type ? false : true}
-                        helperText={errors.content?.message}
+                        error={!errors.shortName?.type ? false : true}
+                        helperText={errors.shortName?.message}
                         {...field}
                         fullWidth
-                        label="content"
+                        label="Short Name"
                       />
                     )} />
+                </Grid>
+                <Grid item xs={12}>
+                  <Controller
+                    control={control}
+                    name="description"
+                    defaultValue=""
+                    id="filled-multiline-static"
+
+                    render={({ field }) => (
+                      <TextField
+                        error={!errors.description?.type ? false : true}
+                        helperText={errors.description?.message}
+                        {...field}
+                        fullWidth
+                        label="Description"
+                        multiline
+                        rows={4}
+                      />
+                    )} />
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">Product Category ID</InputLabel>
+                    <Select
+                      fullWidth
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      defaultValue='c'
+                      label="Product Category Id"
+                      error={!errors.productCategoryId?.type ? false : true}
+                      {...register("productCategoryId")}
+                    >
+                      <MenuItem value='a'>a</MenuItem>
+                      <MenuItem value='b'>b</MenuItem>
+                      <MenuItem value='c'>c</MenuItem>
+                    </Select>
+                    <FormHelperText error>{errors.productCategoryId?.message}</FormHelperText>
+                  </FormControl>
                 </Grid>
               </Grid>
               <Button
@@ -203,17 +247,16 @@ export default function CreateProduct() {
                 type="submit"
                 fullWidth
                 variant="contained">
-                Post
+                {searchParams.get('id') ? 'Update' : 'Add'}
               </Button>
               <Stack>
                 <Button type="button"
                   variant="outlined"
                   sx={{ mt: 3, mb: 2 }}
-                  onClick={() => navigate('/posts')}>
-                  Go to Post
+                  onClick={() => navigate('/product')}>
+                  Product
                 </Button>
               </Stack>
-
             </Box>
           </Box>
         </Container>

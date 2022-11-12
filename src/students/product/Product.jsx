@@ -6,22 +6,18 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Stack, Typography } from '@mui/material';
-import { Button } from '@mui/material';
+import { Stack, Typography, Button } from '@mui/material';
 import axios from 'axios'
 import apiUrl from '../../environment/enviroment'
-import { useState } from 'react'
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../sidebar/Sidebar"
-
+import Navbar from '../navbar/Navbar';
 export default function Product() {
   const [apiResponse, setApiResponse] = useState(null)
   const [loadingData, setLoadingData] = useState(false)
-
-  function getPosts() {
+  function getProducts() {
     setLoadingData(true)
-    axios.get(`${apiUrl.baseUrl}/posts`)
+    axios.get(`${apiUrl.baseUrl}/admin/products`)
       .then((response) => {
         setApiResponse(response.data)
         setLoadingData(false)
@@ -34,17 +30,17 @@ export default function Product() {
       });
   }
 
-  useEffect(() => { getPosts() }, []
+  useEffect(() => { getProducts() }, []
   )
   const navigate = useNavigate()
   function deletepost(i) {
-    axios.delete(`${apiUrl.baseUrl}/posts/${i}`)
+    axios.delete(`${apiUrl.baseUrl}/admin/products/${i}`)
       .then((response) => {
         setApiResponse(prevApiResponse => {
-          let filteredData = prevApiResponse.posts.filter(item => item._id !== i)
+          let filteredData = prevApiResponse.products.filter(item => item._id !== i)
           return {
             ...prevApiResponse,
-            posts: [...filteredData]
+            products: [...filteredData]
           }
         })
       })
@@ -55,53 +51,64 @@ export default function Product() {
   }
   function editpost(i) {
     navigate({
-      pathname: '/create-post',
+      pathname: '/create-product',
       search: `?id=${i}`
     })
   }
 
   return (
     <>
-      <Sidebar />
-      <TableContainer component={Paper} sx={{ width: "60%", margin: "auto", marginTop: 10 }}>
+      <Navbar />
+      <Stack sx={{ mt: 2 }}>
+        <Button sx={{ width: "fit-content", marginLeft: "72%" }} onClick={() => navigate('/create-product')}>Create Product</Button>
+      </Stack>
+      <TableContainer component={Paper} sx={{ width: "60%", margin: "auto", marginTop: 1 }}>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell>Image</TableCell>
-              <TableCell >Title</TableCell>
-              <TableCell >Content</TableCell>
+              <TableCell >Name</TableCell>
+              <TableCell >Short Name</TableCell>
+              <TableCell >Description</TableCell>
+              <TableCell >Product_id</TableCell>
               <TableCell align='center'>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {
-              apiResponse?.posts.map((r) => {
+              apiResponse?.data.map((r) => {
                 return <TableRow key={r._id}>
                   <TableCell>
-                    <div style={{width:200}}>
-                      <img style={{width:"100%"}} src={r.imagePath} alt="img" />
+                    <div style={{ width: 200 }}>
+                      <img style={{ width: "100%" }} src={r.imagePath} alt="img" />
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Typography fontWeight="bold" component="h2">{r.title}</Typography>
+                    <Typography fontWeight="bold" component="h2">{r.name}</Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography fontWeight="bold" component="h2">{r.content}</Typography>
+                    <Typography fontWeight="bold" component="h2">{r.shortName}</Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography fontWeight="bold" component="h2">{r.description}</Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography fontWeight="bold" component="h2">{r.productCategoryId}</Typography>
                   </TableCell>
                   <TableCell align="right">
                     <Stack align="center" display="block" flexDirection="row">
                       <Button type="button" variant="text" onClick={() => { deletepost(r._id) }}>Delete</Button>
-                      <Button type="button" variant="text" onClick={() => { editpost(r._id) }}>Edit</Button>
+                      <Button type="button" variant="text" onClick={() => { editpost(r._id) }}>Update</Button>
                     </Stack>
                   </TableCell>
                 </TableRow>
               })}
-            {!loadingData && !apiResponse?.posts.length &&
+            {!loadingData && !apiResponse?.data.length &&
               <TableRow >
                 <TableCell sx={{ width: "50" }}>No Post yet</TableCell>
               </TableRow>
             }
-            {loadingData && !apiResponse?.posts.length &&
+            {loadingData && !apiResponse?.data.length &&
               <TableRow align="center">
                 <TableCell>Data is being Loading</TableCell>
               </TableRow>
@@ -111,9 +118,6 @@ export default function Product() {
 
         </Table>
       </TableContainer>
-      <Stack sx={{mt:6}}>
-        <Button sx={{ width: 150,margin:"auto"  }}  onClick={() => navigate('/create-post')}>Create Post</Button>
-      </Stack>
     </>
   );
 }

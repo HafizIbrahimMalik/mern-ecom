@@ -46,7 +46,7 @@ export default function CreateProductCategories() {
   useEffect(() => {
     if (searchParams.get('id')) {
       axios
-        .get(`${apiUrl.baseUrl}/productCategories`, +searchParams.get('id'))
+        .get(`${apiUrl.baseUrl}/admin/productCategories`, +searchParams.get('id'))
         .then((response) => {
           console.log(response)
           setProductData({ ...response.data.data[0] })
@@ -59,7 +59,8 @@ export default function CreateProductCategories() {
           console.log(error);
           setApiResponse(error.response.data);
         });
-    }},[]
+    }
+  }, []
   )
   function onSubmit(formData) {
     if (searchParams.get('id')) {
@@ -71,7 +72,7 @@ export default function CreateProductCategories() {
 
   function addData(fData) {
     axios
-      .post(`${apiUrl.baseUrl}/productCategories`, fData)
+      .post(`${apiUrl.baseUrl}/admin/productCategories`, fData)
       .then((response) => {
         setApiResponse(response.data);
         navigate('/product-categories')
@@ -84,7 +85,7 @@ export default function CreateProductCategories() {
 
   function editData(fData, id) {
     axios
-      .put(`${apiUrl.baseUrl}/productCategories/${id}`, fData)
+      .put(`${apiUrl.baseUrl}/admin/productCategories/${id}`, fData)
       .then((response) => {
         setApiResponse(response.data);
         navigate('/product-categories')
@@ -111,10 +112,7 @@ export default function CreateProductCategories() {
             }}
           >
             <Typography component="h1" variant="h5">
-              {<b>{searchParams.get('id') ? 'Update' : 'Add'} Product Category</b>
-              }
-
-
+              {<b>{searchParams.get('id') ? 'Update' : 'Add'} Product Category</b>}
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3 }}>
               <Grid container spacing={2}>
@@ -161,6 +159,8 @@ export default function CreateProductCategories() {
                         helperText={errors.description?.message}
                         {...field}
                         fullWidth
+                        multiline
+                        rows={4}
                         label="Description"
                       />
                     )} />
