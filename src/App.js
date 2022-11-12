@@ -1,15 +1,15 @@
-import SignUp from "./ui/sign-up/SignUp";
-import SignIn from "./ui/sign-in/SignIn";
+import SignUp from "./website/sign-up/SignUp";
+import SignIn from "./website/sign-in/SignIn";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ProtectedRoute } from './authentication/ProtectedRoute';
 import { UnProtectedRoute } from './authentication/UnProtectedRoute';
 import { AuthProvider } from './authentication/AuthProvider';
 import ApiInterceptor from './interceptors/ApiInterceptor';
-import Dashboard from "./students/dashboard/Dashboard";
-import ProductCategories from "./students/productcategories/ProductCategories";
-import CreateProductCategories from "./students/Create-product-categories/CreateProductCategories"
-import CreateProduct from "./students/create-product/CreateProduct";
-import Product from "./students/product/Product";
+import Dashboard from "./admin/dashboard/Dashboard";
+import ProductCategories from "./admin/productcategories/ProductCategories";
+import CreateProductCategories from "./admin/Create-product-categories/CreateProductCategories"
+import CreateProduct from "./admin/create-product/CreateProduct";
+import Product from "./admin/product/Product";
 function App() {
   return (
     <>
