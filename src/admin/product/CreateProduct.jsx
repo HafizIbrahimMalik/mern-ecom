@@ -17,7 +17,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Stack, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import { PhotoCamera } from '@mui/icons-material';
-import Navbar from '../navbar/Navbar';
+import Navbar from '../layouts/navbar/Navbar';
 const schema = yup
   .object()
   .shape({
@@ -37,10 +37,11 @@ export default function CreateProduct() {
   const [imageFile, setImageFile] = useState();
   const [selectedImage, setSelectedImage] = useState(null);
   const inputFileRef = useRef(null);
-  const [, setApiResponse] = useState(null);
+  const [apiResponse, setApiResponse] = useState(null);
   const navigate = useNavigate()
-  const [, setPostData] = useState(null);
   let [searchParams,] = useSearchParams();
+  const [productCategories, setProductCategories] = useState([])
+
   const {
     register,
     handleSubmit,
@@ -54,28 +55,40 @@ export default function CreateProduct() {
   });
 
   useEffect(() => {
+    getProductList()
     if (searchParams.get('id')) {
       axios
         .get(`${apiUrl.baseUrl}/admin/products`, +searchParams.get('id'))
         .then((response) => {
           console.log(response)
-          setPostData({ ...response.data.posts[0] })
-          setSelectedImage(response.data.posts[0].imagePath)
-          setImageFile(response.data.posts[0].imagePath)
-          setValue("image", response.data.posts[0].imagePath);
+          setSelectedImage(response.data.data[0].imagePath)
+          setImageFile(response.data.data[0].imagePath)
+          setValue("id", response.data.data[0]._id);
+          setValue("image", response.data.data[0].imagePath);
           setValue("name", response.data.data[0].name);
           setValue("shortName", response.data.data[0].shortName);
           setValue("description", response.data.data[0].description);
-          setValue("productCategoryId", response.data.data[0].productCategoryId);
+          setValue("productCategoryId", response.data.data[0].productCategory)
         })
         .catch(function (error) {
           console.log(error);
           setApiResponse(error.response.data);
         });
     }
-  },
-    []
+  }, []
   )
+  function addData(fData) {
+    axios
+      .post(`${apiUrl.baseUrl}/admin/products`, fData)
+      .then((response) => {
+        setApiResponse(response.data);
+        navigate('/product')
+      })
+      .catch(function (error) {
+        console.log(error);
+        setApiResponse(error.response.data);
+      });
+  }
 
   function onSubmit(formData) {
     let fData = new FormData();
@@ -94,12 +107,24 @@ export default function CreateProduct() {
       addData(fData)
     }
   }
+  function getProductList() {
+    axios.get(`${apiUrl.baseUrl}/admin/productCategories`)
+      .then((response) => {
+        setProductCategories(response.data.data)
+        console.log(response.data.data)
+
+      })
+      .catch(function (error) {
+        console.log(error);
+        setProductCategories(error.response.data)
+      });
+  }
   function addData(fData) {
     axios
       .post(`${apiUrl.baseUrl}/admin/products`, fData)
       .then((response) => {
         setApiResponse(response.data);
-        navigate('/products')
+        navigate('/product')
       })
       .catch(function (error) {
         console.log(error);
@@ -213,25 +238,32 @@ export default function CreateProduct() {
                       />
                     )} />
                 </Grid>
-                <Grid item xs={12}>
-                  <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">Product Category ID</InputLabel>
-                    <Select
-                      fullWidth
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      defaultValue='c'
-                      label="Product Category Id"
-                      error={!errors.productCategoryId?.type ? false : true}
-                      {...register("productCategoryId")}
-                    >
-                      <MenuItem value='a'>a</MenuItem>
-                      <MenuItem value='b'>b</MenuItem>
-                      <MenuItem value='c'>c</MenuItem>
-                    </Select>
-                    <FormHelperText error>{errors.productCategoryId?.message}</FormHelperText>
-                  </FormControl>
-                </Grid>
+                {productCategories.length > 0 &&
+
+                  <Grid item xs={12}>
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-label">Product Category ID</InputLabel>
+                      <Controller
+                        control={control}
+                        name="productCategoryId"
+                        defaultValue={productCategories[0]._id}
+                        render={({ field }) => (
+                          <Select
+                            fullWidth
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            label="Product Category"
+                            error={!errors.productCategoryId?.type ? false : true}
+                            {...field}
+                          >
+
+                            {productCategories && productCategories.map((item) => {
+                              return <MenuItem key={item._id} value={item._id}>{item.name}</MenuItem>
+                            })}
+                          </Select>)} />
+                      <FormHelperText error>{errors.productCategoryId?.message}</FormHelperText>
+                    </FormControl>
+                  </Grid>}
               </Grid>
               <Button
                 fullWidth

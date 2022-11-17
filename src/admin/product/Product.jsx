@@ -11,7 +11,7 @@ import axios from 'axios'
 import apiUrl from '../../environment/enviroment'
 import { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
-import Navbar from '../navbar/Navbar';
+import Navbar from '../layouts/navbar/Navbar';
 export default function Product() {
   const [apiResponse, setApiResponse] = useState(null)
   const [loadingData, setLoadingData] = useState(false)
@@ -29,9 +29,12 @@ export default function Product() {
         setLoadingData(false)
       });
   }
-
-  useEffect(() => { getProducts() }, []
+ 
+  useEffect(() => {
+    getProducts()
+  }, []
   )
+
   const navigate = useNavigate()
   function deletepost(i) {
     axios.delete(`${apiUrl.baseUrl}/admin/products/${i}`)
@@ -70,7 +73,7 @@ export default function Product() {
               <TableCell >Name</TableCell>
               <TableCell >Short Name</TableCell>
               <TableCell >Description</TableCell>
-              <TableCell >Product_id</TableCell>
+              <TableCell >Product Category Name</TableCell>
               <TableCell align='center'>Action</TableCell>
             </TableRow>
           </TableHead>
@@ -93,7 +96,7 @@ export default function Product() {
                     <Typography fontWeight="bold" component="h2">{r.description}</Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography fontWeight="bold" component="h2">{r.productCategoryId}</Typography>
+                    <Typography fontWeight="bold" component="h2">{r.name}</Typography>
                   </TableCell>
                   <TableCell align="right">
                     <Stack align="center" display="block" flexDirection="row">

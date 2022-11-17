@@ -7,9 +7,11 @@ import { AuthProvider } from './authentication/AuthProvider';
 import ApiInterceptor from './interceptors/ApiInterceptor';
 import Dashboard from "./admin/dashboard/Dashboard";
 import ProductCategories from "./admin/productcategories/ProductCategories";
-import CreateProductCategories from "./admin/Create-product-categories/CreateProductCategories"
-import CreateProduct from "./admin/create-product/CreateProduct";
+import CreateProductCategories from "./admin/productcategories/CreateProductCategories";
+import CreateProduct from "./admin/product/CreateProduct";
 import Product from "./admin/product/Product";
+import UserDashboard from "./website/user-dasboard/UserDashboard";
+import UserNavbar from "./website/userNavbar/UserNavbar";
 function App() {
   return (
     <>
@@ -22,6 +24,16 @@ function App() {
                 <UnProtectedRoute>
                   <SignIn />
                 </UnProtectedRoute>
+              } />
+              <Route path='user-dashboard' element={
+                <ProtectedRoute>
+                  <UserDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path='user-navbar' element={
+                <ProtectedRoute>
+                  <UserNavbar />
+                </ProtectedRoute>
               } />
               <Route
                 path="/dashboard"

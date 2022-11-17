@@ -1,24 +1,12 @@
 import {
-    AppBar, Toolbar, Button, Stack, Menu, MenuItem
+    AppBar, Toolbar, Button
 } from '@mui/material'
-import { useState } from 'react'
-import Sidebar from '../sidebar/Sidebar';
-import { useNavigate } from "react-router-dom";
-import { useAuth } from '../../authentication/AuthProvider'
+import Sidebar from '../sidebar/Sidebar'
+import { useAuth } from '../../../authentication/AuthProvider'
 export default function Navbar() {
-    const [anchorEl, setAnchorEl] = useState(null)
-    const open = Boolean(anchorEl)
-    const navigate = useNavigate()
     const { logout } = useAuth()
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget)
-    }
-    const handleClose = () => {
-        setAnchorEl(null)
-    }
     return (
         <>
-
             <AppBar position='static' color='transparent'>
                 <Toolbar >
                     <div style={{ display: "flex", width: "100%", justifyContent: "space-between" }}>

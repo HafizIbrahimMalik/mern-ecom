@@ -13,7 +13,7 @@ import apiUrl from '../../environment/enviroment'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
-import Navbar from '../navbar/Navbar';
+import Navbar from '../layouts/navbar/Navbar';
 
 export default function ProductCategories() {
   const [apiResponse, setApiResponse] = useState(null)

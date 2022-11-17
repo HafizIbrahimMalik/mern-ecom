@@ -15,7 +15,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Stack } from '@mui/material';
-import Navbar from '../navbar/Navbar';
+import Navbar from '../layouts/navbar/Navbar';
 const schema = yup
   .object()
   .shape({

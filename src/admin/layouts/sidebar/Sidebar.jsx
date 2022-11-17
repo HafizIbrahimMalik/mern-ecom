@@ -3,8 +3,8 @@ import { useState } from 'react'
 import MenuIcon from '@mui/icons-material/Menu'
 import { Stack, Button, Avatar } from '@mui/material'
 import { useNavigate } from "react-router-dom";
-import { useAuth } from '../../authentication/AuthProvider'
-import logo from "../../../src/logo192.png"
+import { useAuth } from '../../../authentication/AuthProvider';
+import logo from "../../../../src/logo192.png"
 export default function Sidebar() {
     const { logout } = useAuth()
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -26,7 +26,7 @@ export default function Sidebar() {
                 open={isDrawerOpen}
                 onClose={() => setIsDrawerOpen(false)}>
                 <Box p={2} width='250px' role='presentation' textAlign='center' >
-                    <div style={{ paddingLeft: "71px" }}>
+                    <div style={{ paddingLeft: "81px" }}>
                         <Avatar src={logo} sx={{ ml: "20px" }} /></div>
                     <Typography variant='bold' component='h1'>
                         TUTU
