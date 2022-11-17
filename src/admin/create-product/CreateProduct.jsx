@@ -10,11 +10,13 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
+import { FormHelperText } from '@mui/material';
 import apiUrl from '../../environment/enviroment'
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Stack } from '@mui/material';
+import { Stack, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
+import { PhotoCamera } from '@mui/icons-material';
 import Navbar from '../navbar/Navbar';
 const schema = yup
   .object()
@@ -23,20 +25,28 @@ const schema = yup
     name: yup.string().required(),
     shortName: yup.string().required(),
     description: yup.string().min(5).required(),
+    productCategoryId: yup.string().required(),
+    image: yup.mixed().required("required"),
   })
   .required();
 
 const theme = createTheme();
 
-export default function CreateProductCategories() {
-  const [apiResponse, setApiResponse] = useState(null);
+
+export default function CreateProduct() {
+  const [imageFile, setImageFile] = useState();
+  const [selectedImage, setSelectedImage] = useState(null);
+  const inputFileRef = useRef(null);
+  const [, setApiResponse] = useState(null);
   const navigate = useNavigate()
-  const [, setProductData] = useState(null);
-  let [searchParams] = useSearchParams();
+  const [, setPostData] = useState(null);
+  let [searchParams,] = useSearchParams();
   const {
+    register,
     handleSubmit,
     setValue,
     control,
+    clearErrors,
     formState: { errors },
   } = useForm({
     mode: "all",
@@ -46,35 +56,50 @@ export default function CreateProductCategories() {
   useEffect(() => {
     if (searchParams.get('id')) {
       axios
-        .get(`${apiUrl.baseUrl}/productCategories`, +searchParams.get('id'))
+        .get(`${apiUrl.baseUrl}/admin/products`, +searchParams.get('id'))
         .then((response) => {
           console.log(response)
-          setProductData({ ...response.data.data[0] })
+          setPostData({ ...response.data.posts[0] })
+          setSelectedImage(response.data.posts[0].imagePath)
+          setImageFile(response.data.posts[0].imagePath)
+          setValue("image", response.data.posts[0].imagePath);
           setValue("name", response.data.data[0].name);
           setValue("shortName", response.data.data[0].shortName);
           setValue("description", response.data.data[0].description);
-          setValue("id", response.data.data[0]._id);
+          setValue("productCategoryId", response.data.data[0].productCategoryId);
         })
         .catch(function (error) {
           console.log(error);
           setApiResponse(error.response.data);
         });
-    }},[]
+    }
+  },
+    []
   )
+
   function onSubmit(formData) {
+    let fData = new FormData();
+    fData.append("image", imageFile);
+    fData.append("name", formData.name);
+    fData.append("shortName", formData.shortName);
+    fData.append("description", formData.description);
+    fData.append("productCategoryId", formData.productCategoryId);
     if (searchParams.get('id')) {
-      editData(formData, searchParams.get('id'))
+      if (typeof imageFile === 'string') {
+        editData(formData, searchParams.get('id'))
+      } else {
+        editData(fData, searchParams.get('id'))
+      }
     } else {
-      addData(formData)
+      addData(fData)
     }
   }
-
   function addData(fData) {
     axios
-      .post(`${apiUrl.baseUrl}/productCategories`, fData)
+      .post(`${apiUrl.baseUrl}/admin/products`, fData)
       .then((response) => {
         setApiResponse(response.data);
-        navigate('/product-categories')
+        navigate('/products')
       })
       .catch(function (error) {
         console.log(error);
@@ -84,17 +109,31 @@ export default function CreateProductCategories() {
 
   function editData(fData, id) {
     axios
-      .put(`${apiUrl.baseUrl}/productCategories/${id}`, fData)
+      .put(`${apiUrl.baseUrl}/admin/products/${id}`, fData)
       .then((response) => {
         setApiResponse(response.data);
-        navigate('/product-categories')
+        navigate('/products')
       })
       .catch(function (error) {
         console.log(error);
         setApiResponse(error.response.data);
       });
   }
-  console.log(apiResponse);
+
+  function handleImageChange(event) {
+    if (event.target.files && event.target.files[0]) {
+      let reader = new FileReader();
+      reader.readAsDataURL(event.target.files[0]);
+
+      reader.onload = (e) => {
+        setSelectedImage(e.target.result);
+      };
+
+      setImageFile(event.target.files[0]);
+      setValue("image", event.target.files[0]);
+      clearErrors('image')
+    }
+  }
 
   return (
     <>
@@ -111,11 +150,16 @@ export default function CreateProductCategories() {
             }}
           >
             <Typography component="h1" variant="h5">
-              {<b>{searchParams.get('id') ? 'Update' : 'Add'} Product Category</b>
-              }
-
-
+              {<b>{searchParams.get('id') ? 'Update' : 'Add'} Product</b>}
             </Typography>
+            <input
+              type="file"
+              hidden
+              ref={inputFileRef}
+              onChange={handleImageChange} />
+            <div style={{ maxWidth: 400, margin: "auto" }}>
+              <img style={{ width: "100%" }} src={selectedImage} alt="" />
+            </div>
             <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3 }}>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
@@ -155,6 +199,8 @@ export default function CreateProductCategories() {
                     control={control}
                     name="description"
                     defaultValue=""
+                    id="filled-multiline-static"
+
                     render={({ field }) => (
                       <TextField
                         error={!errors.description?.type ? false : true}
@@ -162,27 +208,55 @@ export default function CreateProductCategories() {
                         {...field}
                         fullWidth
                         label="Description"
+                        multiline
+                        rows={4}
                       />
                     )} />
                 </Grid>
+                <Grid item xs={12}>
+                  <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">Product Category ID</InputLabel>
+                    <Select
+                      fullWidth
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      defaultValue='c'
+                      label="Product Category Id"
+                      error={!errors.productCategoryId?.type ? false : true}
+                      {...register("productCategoryId")}
+                    >
+                      <MenuItem value='a'>a</MenuItem>
+                      <MenuItem value='b'>b</MenuItem>
+                      <MenuItem value='c'>c</MenuItem>
+                    </Select>
+                    <FormHelperText error>{errors.productCategoryId?.message}</FormHelperText>
+                  </FormControl>
+                </Grid>
               </Grid>
+              <Button
+                fullWidth
+                onClick={() => inputFileRef?.current.click()}
+                sx={{ mt: 3, mb: 2 }}>
+                Upload
+                <PhotoCamera sx={{ ml: 5 }} color='primary' />
+              </Button>
+
+              <FormHelperText error>{errors.image?.message}</FormHelperText>
               <Button
                 onClick={handleSubmit}
                 type="submit"
                 fullWidth
-                sx={{ mt: 3, mb: 2 }}
                 variant="contained">
                 {searchParams.get('id') ? 'Update' : 'Add'}
               </Button>
               <Stack>
                 <Button type="button"
                   variant="outlined"
-                  sx={{ mb: 2 }}
-                  onClick={() => navigate('/product-categories')}>
-                  Product Categories
+                  sx={{ mt: 3, mb: 2 }}
+                  onClick={() => navigate('/product')}>
+                  Product
                 </Button>
               </Stack>
-
             </Box>
           </Box>
         </Container>

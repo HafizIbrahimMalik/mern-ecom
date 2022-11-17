@@ -1,6 +1,7 @@
 const Product = require('../models/product')
 
 exports.CreateProduct = (req, res, next) => {     //router.product to use request of product   ii) multer(storage).single('image')   this function mean we expect single file with property name image from frontnend
+  console.log('as',req.body);
     const url = req.protocol + '://' + req.get("host")   //this is to get address of server so we can put it in our saved image
     const product = new Product({
         name: req.body.name,
