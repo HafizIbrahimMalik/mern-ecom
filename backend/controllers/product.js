@@ -59,7 +59,7 @@ exports.UpdateProduct = (req, res, next) => {     //router.product to use reques
 
 exports.GetProducts = (req, res, next) => {
     const paginationDetails = { ...req.query }
-    const productQuery = Product.find()
+    const productQuery = Product.find().populate('productCategory')
     if (+paginationDetails.pageSize && +paginationDetails.pageIndex) {
         productQuery
             .skip(+paginationDetails.pageSize * (+paginationDetails.pageIndex - 1))   //  (paginationDetails.pageIndex - 1) this mean to skip previous pages data
