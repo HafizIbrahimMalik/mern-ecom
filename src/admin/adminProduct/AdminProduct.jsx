@@ -6,27 +6,22 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Stack, Typography } from '@mui/material';
-import { Button } from '@mui/material';
+import { Stack, Typography, Button } from '@mui/material';
 import axios from 'axios'
 import apiUrl from '../../environment/enviroment'
-import { useState } from 'react'
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
-import Navbar from '../layouts/navbar/Navbar';
-
-export default function ProductCategories() {
+import AdminNavbar from '../adminLayouts/adminNavbar/AdminNavbar';
+export default function AdminProduct() {
   const [apiResponse, setApiResponse] = useState(null)
   const [loadingData, setLoadingData] = useState(false)
-
-  function getProductList() {
+  function getProducts() {
     setLoadingData(true)
-    axios.get(`${apiUrl.baseUrl}/admin/productCategories`)
+    axios.get(`${apiUrl.baseUrl}/admin/products`)
       .then((response) => {
         setApiResponse(response.data)
         setLoadingData(false)
         console.log(response.data)
-
       })
       .catch(function (error) {
         console.log(error);
@@ -34,19 +29,21 @@ export default function ProductCategories() {
         setLoadingData(false)
       });
   }
-
-  useEffect(() => { getProductList() }, []
+ 
+  useEffect(() => {
+    getProducts()
+  }, []
   )
+
   const navigate = useNavigate()
-  function deleteproductCategories(i) {
-    axios.delete(`${apiUrl.baseUrl}/admin/productCategories/${i}`)
+  function deletepost(i) {
+    axios.delete(`${apiUrl.baseUrl}/admin/products/${i}`)
       .then((response) => {
         setApiResponse(prevApiResponse => {
-          let filteredData = prevApiResponse.data.filter(item => item._id !== i)
-
+          let filteredData = prevApiResponse.products.filter(item => item._id !== i)
           return {
             ...prevApiResponse,
-            data: [...filteredData]
+            products: [...filteredData]
           }
         })
       })
@@ -55,26 +52,28 @@ export default function ProductCategories() {
         setApiResponse(error.response.data)
       });
   }
-  function editproductCategories(i) {
+  function editpost(i) {
     navigate({
-      pathname: '/create-productCategories',
+      pathname: '/admin/create-product',
       search: `?id=${i}`
     })
   }
 
   return (
     <>
-      <Navbar />
+      <AdminNavbar />
       <Stack sx={{ mt: 2 }}>
-        <Button sx={{ width: "fit-content", marginLeft: "68%" }} onClick={() => navigate('/create-productCategories')}>Create Product Category</Button>
+        <Button sx={{ width: "fit-content", marginLeft: "72%" }} onClick={() => navigate('/admin/create-product')}>Create Product</Button>
       </Stack>
       <TableContainer component={Paper} sx={{ width: "60%", margin: "auto", marginTop: 1 }}>
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell>Image</TableCell>
               <TableCell >Name</TableCell>
               <TableCell >Short Name</TableCell>
-              <TableCell >Descriptions</TableCell>
+              <TableCell >Description</TableCell>
+              <TableCell >Product Category Name</TableCell>
               <TableCell align='center'>Action</TableCell>
             </TableRow>
           </TableHead>
@@ -82,6 +81,11 @@ export default function ProductCategories() {
             {
               apiResponse?.data.map((r) => {
                 return <TableRow key={r._id}>
+                  <TableCell>
+                    <div style={{ width: 200 }}>
+                      <img style={{ width: "100%" }} src={r.imagePath} alt="img" />
+                    </div>
+                  </TableCell>
                   <TableCell>
                     <Typography fontWeight="bold" component="h2">{r.name}</Typography>
                   </TableCell>
@@ -91,25 +95,30 @@ export default function ProductCategories() {
                   <TableCell>
                     <Typography fontWeight="bold" component="h2">{r.description}</Typography>
                   </TableCell>
+                  <TableCell>
+                    <Typography fontWeight="bold" component="h2">{r.productCategory.name}</Typography>
+                  </TableCell>
                   <TableCell align="right">
                     <Stack align="center" display="block" flexDirection="row">
-                      <Button type="button" variant="text" onClick={() => { deleteproductCategories(r._id) }}>Delete</Button>
-                      <Button type="button" variant="text" onClick={() => { editproductCategories(r._id) }}>Update</Button>
+                      <Button type="button" variant="text" onClick={() => { deletepost(r._id) }}>Delete</Button>
+                      <Button type="button" variant="text" onClick={() => { editpost(r._id) }}>Update</Button>
                     </Stack>
                   </TableCell>
                 </TableRow>
               })}
             {!loadingData && !apiResponse?.data.length &&
-              <TableRow>
-                <TableCell sx={{ width: "50" }}>No  Data yet</TableCell>
+              <TableRow >
+                <TableCell sx={{ width: "50" }}>No Post yet</TableCell>
               </TableRow>
             }
             {loadingData && !apiResponse?.data.length &&
-              <TableRow>
+              <TableRow align="center">
                 <TableCell>Data is being Loading</TableCell>
               </TableRow>
             }
           </TableBody>
+
+
         </Table>
       </TableContainer>
     </>

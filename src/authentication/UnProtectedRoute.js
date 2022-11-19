@@ -7,5 +7,5 @@ export const UnProtectedRoute = ({ children }) => {
         // user is not authenticated
         return children;
     }
-    return <Navigate to="/dashboard" />;
+    return <Navigate to="/admin/dashboard" />;
 };

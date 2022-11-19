@@ -5,7 +5,7 @@ import { Stack, Button, Avatar } from '@mui/material'
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '../../../authentication/AuthProvider';
 import logo from "../../../../src/logo192.png"
-export default function Sidebar() {
+export default function AdminSidebar() {
     const { logout } = useAuth()
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
     const navigate = useNavigate()
@@ -32,11 +32,11 @@ export default function Sidebar() {
                         TUTU
                     </Typography>
                     <Stack>
-                        {window.location.href === "http://localhost:3000/create-productCategories" ? "" : <Button sx={{ mt: 5, fontSize: 14, fontWeight: 700 }} onClick={() => navigate('/create-productCategories')}>Create Product Category</Button>}
-                        {window.location.href === "http://localhost:3000/product-categories" ? "" : <Button sx={{ mt: 1 }} onClick={() => navigate('/product-categories')}>Product Categories</Button>}
-                        {window.location.href === "http://localhost:3000/create-product" ? "" : <Button sx={{ mt: 1 }} onClick={() => navigate('/create-product')}>Create Product</Button>}
-                        {window.location.href === "http://localhost:3000/product" ? "" : <Button sx={{ mt: 1 }} onClick={() => navigate('/product')}>Product</Button>}
-                        {window.location.href === "http://localhost:3000/Dashboard" ? "" : <Button sx={{ mt: 1 }} onClick={() => navigate('/Dashboard')}>Dashboard</Button>}
+                        {window.location.href === "http://localhost:3000/create-productCategories" ? "" : <Button sx={{ mt: 5, fontSize: 14, fontWeight: 700 }} onClick={() => navigate('/admin/create-productCategories')}>Create Product Category</Button>}
+                        {window.location.href === "http://localhost:3000/product-categories" ? "" : <Button sx={{ mt: 1 }} onClick={() => navigate('/admin/product-categories')}>Product Categories</Button>}
+                        {window.location.href === "http://localhost:3000/create-product" ? "" : <Button sx={{ mt: 1 }} onClick={() => navigate('/admin/create-product')}>Create Product</Button>}
+                        {window.location.href === "http://localhost:3000/product" ? "" : <Button sx={{ mt: 1 }} onClick={() => navigate('/admin/product')}>Product</Button>}
+                        {window.location.href === "http://localhost:3000/Dashboard" ? "" : <Button sx={{ mt: 1 }} onClick={() => navigate('/admin/Dashboard')}>Dashboard</Button>}
                         <Button sx={{ mt: 1 }} onClick={logout}>logout</Button>
                     </Stack>
                 </Box>

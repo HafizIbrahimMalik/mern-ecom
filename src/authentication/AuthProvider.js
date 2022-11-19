@@ -10,24 +10,32 @@ export const AuthProvider = ({ children }) => {
     const login = (data) => {
         setUserDetails(data);
         localStorage.setItem('userDetails', JSON.stringify(data))
-        navigate("/dashboard");
-    };
+        if (data.email == 'admin@mail.com') {
+            navigate("/admin/dashboard");
+        } else if (data.seller) {
+            navigate("/seller/dashboard");
+        } else if (data.buyer) {
+            navigate("/buyer/dashboard");
+        } else {
+            navigate("/");
+        }
+};
 
-    // call this function to sign out logged in user
-    const logout = () => {
-        setUserDetails(null);
-        localStorage.removeItem('userDetails')
-        navigate("/sign-in", { replace: true });
-    };
-    const value = useMemo(
-        () => ({
-            userDetails,
-            login,
-            logout
-        }),// eslint-disable-next-line react-hooks/exhaustive-deps
-        [userDetails]
-    );
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+// call this function to sign out logged in user
+const logout = () => {
+    setUserDetails(null);
+    localStorage.removeItem('userDetails')
+    navigate("/sign-in", { replace: true });
+};
+const value = useMemo(
+    () => ({
+        userDetails,
+        login,
+        logout
+    }),// eslint-disable-next-line react-hooks/exhaustive-deps
+    [userDetails]
+);
+return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

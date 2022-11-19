@@ -15,7 +15,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Stack } from '@mui/material';
-import Navbar from '../layouts/navbar/Navbar';
+import AdminNavbar from '../adminLayouts/adminNavbar/AdminNavbar';
 const schema = yup
   .object()
   .shape({
@@ -28,7 +28,7 @@ const schema = yup
 
 const theme = createTheme();
 
-export default function CreateProductCategories() {
+export default function AdminCreateProductCategories() {
   const [apiResponse, setApiResponse] = useState(null);
   const navigate = useNavigate()
   const [, setProductData] = useState(null);
@@ -75,7 +75,7 @@ export default function CreateProductCategories() {
       .post(`${apiUrl.baseUrl}/admin/productCategories`, fData)
       .then((response) => {
         setApiResponse(response.data);
-        navigate('/product-categories')
+        navigate('/admin/product-categories')
       })
       .catch(function (error) {
         console.log(error);
@@ -88,7 +88,7 @@ export default function CreateProductCategories() {
       .put(`${apiUrl.baseUrl}/admin/productCategories/${id}`, fData)
       .then((response) => {
         setApiResponse(response.data);
-        navigate('/product-categories')
+        navigate('/admin/product-categories')
       })
       .catch(function (error) {
         console.log(error);
@@ -99,7 +99,7 @@ export default function CreateProductCategories() {
 
   return (
     <>
-      <Navbar />
+      <AdminNavbar />
       <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
@@ -178,7 +178,7 @@ export default function CreateProductCategories() {
                 <Button type="button"
                   variant="outlined"
                   sx={{ mb: 2 }}
-                  onClick={() => navigate('/product-categories')}>
+                  onClick={() => navigate('/admin/product-categories')}>
                   Product Categories
                 </Button>
               </Stack>

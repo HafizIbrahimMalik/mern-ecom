@@ -17,7 +17,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Stack, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import { PhotoCamera } from '@mui/icons-material';
-import Navbar from '../layouts/navbar/Navbar';
+import AdminNavbar from '../adminLayouts/adminNavbar/AdminNavbar';
 const schema = yup
   .object()
   .shape({
@@ -33,7 +33,7 @@ const schema = yup
 const theme = createTheme();
 
 
-export default function CreateProduct() {
+export default function AdminCreateProduct() {
   const [imageFile, setImageFile] = useState();
   const [selectedImage, setSelectedImage] = useState(null);
   const inputFileRef = useRef(null);
@@ -68,7 +68,7 @@ export default function CreateProduct() {
           setValue("name", response.data.data[0].name);
           setValue("shortName", response.data.data[0].shortName);
           setValue("description", response.data.data[0].description);
-          setValue("productCategoryId", response.data.data[0].productCategory)
+          setValue("productCategoryId", response.data.data[0].productCategory._id)
         })
         .catch(function (error) {
           console.log(error);
@@ -137,7 +137,7 @@ export default function CreateProduct() {
       .put(`${apiUrl.baseUrl}/admin/products/${id}`, fData)
       .then((response) => {
         setApiResponse(response.data);
-        navigate('/products')
+        navigate('/admin/product')
       })
       .catch(function (error) {
         console.log(error);
@@ -162,7 +162,7 @@ export default function CreateProduct() {
 
   return (
     <>
-      <Navbar />
+      <AdminNavbar />
       <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
@@ -285,7 +285,7 @@ export default function CreateProduct() {
                 <Button type="button"
                   variant="outlined"
                   sx={{ mt: 3, mb: 2 }}
-                  onClick={() => navigate('/product')}>
+                  onClick={() => navigate('/admin/product')}>
                   Product
                 </Button>
               </Stack>

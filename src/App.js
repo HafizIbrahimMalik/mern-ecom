@@ -5,13 +5,14 @@ import { ProtectedRoute } from './authentication/ProtectedRoute';
 import { UnProtectedRoute } from './authentication/UnProtectedRoute';
 import { AuthProvider } from './authentication/AuthProvider';
 import ApiInterceptor from './interceptors/ApiInterceptor';
-import Dashboard from "./admin/dashboard/Dashboard";
-import ProductCategories from "./admin/productcategories/ProductCategories";
-import CreateProductCategories from "./admin/productcategories/CreateProductCategories";
-import CreateProduct from "./admin/product/CreateProduct";
-import Product from "./admin/product/Product";
+import AdminDashboard from "./admin/adminDashboard/AdminDashboard";
+import AdminProductCategories from "./admin/adminProductCategories/AdminProductCategories";
+import AdminCreateProductCategories from "./admin/adminProductCategories/AdminCreateProductCategories";
+import AdminCreateProduct from "./admin/adminProduct/AdminCreateProduct";
+import AdminProduct from "./admin/adminProduct/AdminProduct";
 import UserDashboard from "./website/user-dasboard/UserDashboard";
 import UserNavbar from "./website/userNavbar/UserNavbar";
+import { AdminProtectedRoute } from "./authentication/AdminProtectedRoute";
 function App() {
   return (
     <>
@@ -25,57 +26,55 @@ function App() {
                   <SignIn />
                 </UnProtectedRoute>
               } />
-              <Route path='user-dashboard' element={
-                <ProtectedRoute>
+              <Route path='buyer/dashboard' element={
                   <UserDashboard />
-                </ProtectedRoute>
               } />
-              <Route path='user-navbar' element={
+              <Route path='user/navbar' element={
                 <ProtectedRoute>
                   <UserNavbar />
                 </ProtectedRoute>
               } />
               <Route
-                path="/dashboard"
+                path="admin/dashboard"
                 element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
+                  <AdminProtectedRoute>
+                    <AdminDashboard />
+                  </AdminProtectedRoute>
                 }
               />
               <Route
-                path="/product-categories"
+                path="/admin/product-categories"
                 element={
-                  <ProtectedRoute>
-                    <ProductCategories />
-                  </ProtectedRoute>
+                  <AdminProtectedRoute>
+                    <AdminProductCategories />
+                  </AdminProtectedRoute>
                 }
               />
               <Route
-              path="/create-productCategories"
-              element={
-                <ProtectedRoute>
-                  <CreateProductCategories />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/create-product"
-              element={
-                <ProtectedRoute>
-                  <CreateProduct />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/product"
-              element={
-                <ProtectedRoute>
-                  <Product />
-                </ProtectedRoute>
-              }
-            />
-             </Routes>
+                path="/admin/create-productCategories"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminCreateProductCategories />
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/create-product"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminCreateProduct />
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/product"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminProduct />
+                  </AdminProtectedRoute>
+                }
+              />
+            </Routes>
           </ApiInterceptor>
         </AuthProvider>
       </Router>
