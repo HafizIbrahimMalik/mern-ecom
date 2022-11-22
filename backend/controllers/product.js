@@ -86,7 +86,7 @@ exports.GetProducts = (req, res, next) => {
 }
 
 exports.GetProduct = (req, res, next) => {
-    Product.findById(req.params.id).then(product => {
+    Product.findById(req.params.id).populate('productCategory').then(product => {
         if (product) {
             res.status(200).json({
                 message: 'Product fetched successfully',
