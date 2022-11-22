@@ -5,9 +5,11 @@ import apiUrl from '../../../environment/enviroment';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from 'react-slick';
-import "./Slider.scss"
+import "./Categories.scss"
+import { Typography } from '@mui/material';
 import { useEffect } from 'react';
-export function Slideer() {
+import { Box, Stack } from '@mui/system';
+export function Categories() {
   const [apiResponse, setApiResponse] = useState(null)
   const [loadingData, setLoadingData] = useState(true)
   const settings = {
@@ -41,23 +43,24 @@ export function Slideer() {
   )
   return (
     <>
-      <div style={{ width: '50%', margin: 'auto' }}>
+      <Box style={{ width: '50%', margin: 'auto' }}>
         {!loadingData &&
           <Slider  {...settings}>
             {
               apiResponse.data.map((item) => {
-                return <div className='slide' key={item._id}>
-                  <p>{item._id}</p>
-                  <h1>{item.name}</h1>
-                  <h1>{item.shortName}</h1>
-                  <h1>{item.description}</h1>
-                </div>
+                return <Stack className='slide' key={item._id}>
+                   <Typography variant="h4">{item.name}</Typography>
+                  <Typography variant="h6">{item.shortName}</Typography>
+                  <Typography sx={{ display: "-webkit-box", WebkitBoxOrient: "vertical", WebkitLineClamp: "1", overflow: "hidden" }} variant="body2" color="text.secondary">
+                    {item.description}
+                  </Typography>
+                </Stack>
               })
             }
           </Slider>}
-      </div>
+      </Box>
     </>
 
   );
 }
-export default Slideer
+export default Categories

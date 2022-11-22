@@ -13,7 +13,6 @@ import apiUrl from '../../environment/enviroment'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
-import AdminNavbar from '../adminLayouts/adminNavbar/AdminNavbar';
 
 export default function AdminProductCategories() {
   const [apiResponse, setApiResponse] = useState(null)
@@ -64,7 +63,6 @@ export default function AdminProductCategories() {
 
   return (
     <>
-      <AdminNavbar />
       <Stack sx={{ mt: 2 }}>
         <Button sx={{ width: "fit-content", marginLeft: "68%" }} onClick={() => navigate('/admin/create-productCategories')}>Create Product Category</Button>
       </Stack>

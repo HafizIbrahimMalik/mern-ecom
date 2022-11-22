@@ -11,10 +11,39 @@ import axios from 'axios'
 import apiUrl from '../../environment/enviroment'
 import { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
-import AdminNavbar from '../adminLayouts/adminNavbar/AdminNavbar';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
 export default function AdminProduct() {
   const [apiResponse, setApiResponse] = useState(null)
   const [loadingData, setLoadingData] = useState(false)
+  const navigate = useNavigate()
+  const [open, setOpen] = useState(false);
+  const [slectedProduct, setSlectedProduct] = useState({})
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  useEffect(() => {
+    getProducts()
+  }, []
+  )
+  function handleProduct(product) {
+    setSlectedProduct(product)
+    handleOpen()
+  }
+
   function getProducts() {
     setLoadingData(true)
     axios.get(`${apiUrl.baseUrl}/admin/products`)
@@ -29,13 +58,7 @@ export default function AdminProduct() {
         setLoadingData(false)
       });
   }
- 
-  useEffect(() => {
-    getProducts()
-  }, []
-  )
 
-  const navigate = useNavigate()
   function deletepost(i) {
     axios.delete(`${apiUrl.baseUrl}/admin/products/${i}`)
       .then((response) => {
@@ -52,6 +75,7 @@ export default function AdminProduct() {
         setApiResponse(error.response.data)
       });
   }
+
   function editpost(i) {
     navigate({
       pathname: '/admin/create-product',
@@ -61,29 +85,34 @@ export default function AdminProduct() {
 
   return (
     <>
-      <AdminNavbar />
-      <Stack sx={{ mt: 2 }}>
-        <Button sx={{ width: "fit-content", marginLeft: "72%" }} onClick={() => navigate('/admin/create-product')}>Create Product</Button>
-      </Stack>
+      <Box
+        display="flex"
+        justifyContent="flex-end"
+        alignItems="flex-end"
+        width="60%" margin="auto"
+        marginTop={3}
+      >
+        <Button sx={{ bgcolor: "#bbdefb" }} onClick={() => navigate('/admin/create-product')}>Create Product</Button>
+      </Box>
       <TableContainer component={Paper} sx={{ width: "60%", margin: "auto", marginTop: 1 }}>
         <Table>
           <TableHead>
-            <TableRow>
-              <TableCell>Image</TableCell>
-              <TableCell >Name</TableCell>
-              <TableCell >Short Name</TableCell>
-              <TableCell >Description</TableCell>
-              <TableCell >Product Category Name</TableCell>
-              <TableCell align='center'>Action</TableCell>
+            <TableRow sx={{ bgcolor: "#bbdefb" }}>
+              <TableCell width={"14%"}>Image</TableCell>
+              <TableCell width={"14%"}>Name</TableCell>
+              <TableCell width={"14%"}>Short Name</TableCell>
+              <TableCell width={"14%"}>Description</TableCell>
+              <TableCell width={"14%"} >Product Category Name</TableCell>
+              <TableCell width={"14%"} align='center'>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {
               apiResponse?.data.map((r) => {
-                return <TableRow key={r._id}>
+                return <TableRow sx={{ bgcolor: "#e3f2fd" }} key={r._id}>
                   <TableCell>
                     <div style={{ width: 200 }}>
-                      <img style={{ width: "100%" }} src={r.imagePath} alt="img" />
+                      <img onClick={handleProduct.bind(this, r)} style={{ width: "100%" }} src={r.imagePath} alt="img" />
                     </div>
                   </TableCell>
                   <TableCell>
@@ -93,15 +122,16 @@ export default function AdminProduct() {
                     <Typography fontWeight="bold" component="h2">{r.shortName}</Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography fontWeight="bold" component="h2">{r.description}</Typography>
+                    <Typography sx={{ display: "-webkit-box", WebkitBoxOrient: "vertical", WebkitLineClamp: "2", overflow: "hidden" }} fontWeight="bold" component="h2">{r.description}</Typography>
                   </TableCell>
                   <TableCell>
                     <Typography fontWeight="bold" component="h2">{r.productCategory.name}</Typography>
                   </TableCell>
                   <TableCell align="right">
-                    <Stack align="center" display="block" flexDirection="row">
-                      <Button type="button" variant="text" onClick={() => { deletepost(r._id) }}>Delete</Button>
-                      <Button type="button" variant="text" onClick={() => { editpost(r._id) }}>Update</Button>
+                    <Stack  flexDirection="row" display={"flex"} gap="2%">
+                      <Button sx={{  bgcolor: "#ff867c", pl: "2px", width: "32%" }} type="button" variant="text" onClick={() => { deletepost(r._id) }}>Delete</Button>
+                      <Button sx={{  bgcolor: "#bbdefb", pl: "2px", width: "32%" }} type="button" variant="text" onClick={() => { editpost(r._id) }}>Update</Button>
+                      <Button sx={{  bgcolor: "#bbdefb", pl: "2px", width: "32%" }} onClick={handleProduct.bind(this, r)}>Details</Button>
                     </Stack>
                   </TableCell>
                 </TableRow>
@@ -121,6 +151,34 @@ export default function AdminProduct() {
 
         </Table>
       </TableContainer>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div style={{ display: "flex", gap: "72px" }}>
+            <div style={{ width: "500px" }}>
+              <img style={{ width: "100%" }} src={slectedProduct?.imagePath} alt="img" />
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+              <Typography fontWeight="bold" component="h2">{slectedProduct?.name}</Typography>
+              <Typography fontWeight="bold" component="h2">{slectedProduct?.shortName}</Typography>
+              <Typography fontWeight="bold" component="h2">{slectedProduct?.description}</Typography>
+              <Typography fontWeight="bold" component="h2">{slectedProduct?.productCategory?.name}</Typography>
+            </div>
+          </div>
+          <Box
+            m={1}
+            display="flex"
+            justifyContent="flex-end"
+            alignItems="flex-end"
+          >
+            <Button sx={{ bgcolor: "#bbdefb" }} onClick={handleClose}>Close</Button>
+          </Box>
+        </Box>
+      </Modal>
     </>
   );
 }

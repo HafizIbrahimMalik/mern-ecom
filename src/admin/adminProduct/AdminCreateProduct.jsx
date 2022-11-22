@@ -17,7 +17,6 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Stack, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import { PhotoCamera } from '@mui/icons-material';
-import AdminNavbar from '../adminLayouts/adminNavbar/AdminNavbar';
 const schema = yup
   .object()
   .shape({
@@ -57,18 +56,19 @@ export default function AdminCreateProduct() {
   useEffect(() => {
     getProductList()
     if (searchParams.get('id')) {
+      console.log(searchParams.get('id'));
       axios
-        .get(`${apiUrl.baseUrl}/admin/products`, +searchParams.get('id'))
+        .get(`${apiUrl.baseUrl}/admin/products/${searchParams.get('id')}`)
         .then((response) => {
-          console.log(response)
-          setSelectedImage(response.data.data[0].imagePath)
-          setImageFile(response.data.data[0].imagePath)
-          setValue("id", response.data.data[0]._id);
-          setValue("image", response.data.data[0].imagePath);
-          setValue("name", response.data.data[0].name);
-          setValue("shortName", response.data.data[0].shortName);
-          setValue("description", response.data.data[0].description);
-          setValue("productCategoryId", response.data.data[0].productCategory._id)
+          console.log('asdf',response.data.data)
+          setSelectedImage(response.data.data.imagePath)
+          setImageFile(response.data.data.imagePath)
+          setValue("id", response.data.data._id);
+          setValue("image", response.data.data.imagePath);
+          setValue("name", response.data.data.name);
+          setValue("shortName", response.data.data.shortName);
+          setValue("description", response.data.data.description);
+          setValue("productCategoryId", response.data.data.productCategory._id)
         })
         .catch(function (error) {
           console.log(error);
@@ -82,7 +82,7 @@ export default function AdminCreateProduct() {
       .post(`${apiUrl.baseUrl}/admin/products`, fData)
       .then((response) => {
         setApiResponse(response.data);
-        navigate('/product')
+        navigate('/admin/product')
       })
       .catch(function (error) {
         console.log(error);
@@ -124,7 +124,7 @@ export default function AdminCreateProduct() {
       .post(`${apiUrl.baseUrl}/admin/products`, fData)
       .then((response) => {
         setApiResponse(response.data);
-        navigate('/product')
+        navigate('/admin/product')
       })
       .catch(function (error) {
         console.log(error);
@@ -145,6 +145,8 @@ export default function AdminCreateProduct() {
       });
   }
 
+
+
   function handleImageChange(event) {
     if (event.target.files && event.target.files[0]) {
       let reader = new FileReader();
@@ -162,7 +164,6 @@ export default function AdminCreateProduct() {
 
   return (
     <>
-      <AdminNavbar />
       <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
@@ -201,7 +202,6 @@ export default function AdminCreateProduct() {
                         label="Name"
                       />
                     )}
-
                   />
                 </Grid>
                 <Grid item xs={12}>

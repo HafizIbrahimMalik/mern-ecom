@@ -15,7 +15,6 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Stack } from '@mui/material';
-import AdminNavbar from '../adminLayouts/adminNavbar/AdminNavbar';
 const schema = yup
   .object()
   .shape({
@@ -95,11 +94,9 @@ export default function AdminCreateProductCategories() {
         setApiResponse(error.response.data);
       });
   }
-  console.log(apiResponse);
 
   return (
     <>
-      <AdminNavbar />
       <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
