@@ -12,23 +12,28 @@ import { Box, Stack } from '@mui/system';
 export function Categories() {
   const [apiResponse, setApiResponse] = useState(null)
   const [loadingData, setLoadingData] = useState(true)
-  const settings = {
+  const [settings, setSettings] = useState({
     dots: true,
     infinite: true,
     speed: 1000,
-    slidesToShow: 2,
-    slidesToScroll: 2,
+    slidesToShow: 1,
+    slidesToScroll: 1,
     arrows: true,
     autoplay: true,
     autoplaySpeed: 6000,
     lazyLoad: true,
     dots: false
-  };
+  })
   function getProductList() {
     setLoadingData(true)
     axios.get(`${apiUrl.baseUrl}/admin/productCategories`)
       .then((response) => {
         setApiResponse(response.data)
+        setSettings(prevSettings => (
+          {
+            ...prevSettings,
+            slidesToShow: response.data.data.length < 3 ? response.data.data.length : 3
+          }))
         setLoadingData(false)
         console.log(response.data)
 
@@ -42,16 +47,19 @@ export function Categories() {
   useEffect(() => { getProductList() }, []
   )
   return (
-    <>
-      <Box style={{ width: '50%', margin: 'auto' }}>
+    <div style={{}}>
+
+      <Box style={{ width: '50%', paddingBottom: "20px", margin: 'auto' }}>
+        <h1 style={{ paddingLeft: 30 }}>Categories</h1>
         {!loadingData &&
           <Slider  {...settings}>
             {
               apiResponse.data.map((item) => {
                 return <Stack className='slide' key={item._id}>
-                   <Typography variant="h4">{item.name}</Typography>
+
+                  <Typography variant="h4">{item.name}</Typography>
                   <Typography variant="h6">{item.shortName}</Typography>
-                  <Typography sx={{ display: "-webkit-box", WebkitBoxOrient: "vertical", WebkitLineClamp: "1", overflow: "hidden" }} variant="body2" color="text.secondary">
+                  <Typography sx={{ maxWidth: 200, overflow: "hidden",textOverflow: "ellipsis", whiteSpace: 'nowrap' }} color="text.secondary">
                     {item.description}
                   </Typography>
                 </Stack>
@@ -59,7 +67,7 @@ export function Categories() {
             }
           </Slider>}
       </Box>
-    </>
+    </div>
 
   );
 }

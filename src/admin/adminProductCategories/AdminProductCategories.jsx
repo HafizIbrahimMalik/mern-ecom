@@ -13,7 +13,6 @@ import apiUrl from '../../environment/enviroment'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
-
 export default function AdminProductCategories() {
   const [apiResponse, setApiResponse] = useState(null)
   const [loadingData, setLoadingData] = useState(false)
@@ -42,7 +41,6 @@ export default function AdminProductCategories() {
       .then((response) => {
         setApiResponse(prevApiResponse => {
           let filteredData = prevApiResponse.data.filter(item => item._id !== i)
-
           return {
             ...prevApiResponse,
             data: [...filteredData]
@@ -70,26 +68,26 @@ export default function AdminProductCategories() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell >Name</TableCell>
-              <TableCell >Short Name</TableCell>
-              <TableCell >Descriptions</TableCell>
-              <TableCell align='center'>Action</TableCell>
+              <TableCell width="25%">Name</TableCell>
+              <TableCell width="25%">Short Name</TableCell>
+              <TableCell width="25%">Descriptions</TableCell>
+              <TableCell width="25%" align='center'>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {
               apiResponse?.data.map((r) => {
                 return <TableRow key={r._id}>
-                  <TableCell>
+                  <TableCell width="25%">
                     <Typography fontWeight="bold" component="h2">{r.name}</Typography>
-                  </TableCell>
-                  <TableCell>
+                  </TableCell >
+                  <TableCell width="25%">
                     <Typography fontWeight="bold" component="h2">{r.shortName}</Typography>
                   </TableCell>
-                  <TableCell>
-                    <Typography fontWeight="bold" component="h2">{r.description}</Typography>
+                  <TableCell width="25%">
+                    <Typography fontWeight="bold" component="h2" sx={{ maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: 'nowrap' }}>{r.description}</Typography>
                   </TableCell>
-                  <TableCell align="right">
+                  <TableCell width="25%" align="right">
                     <Stack align="center" display="block" flexDirection="row">
                       <Button type="button" variant="text" onClick={() => { deleteproductCategories(r._id) }}>Delete</Button>
                       <Button type="button" variant="text" onClick={() => { editproductCategories(r._id) }}>Update</Button>

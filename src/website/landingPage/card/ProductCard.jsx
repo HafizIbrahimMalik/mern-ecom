@@ -28,10 +28,21 @@ export function ProductCard() {
                 setApiResponse(error.response.data)
                 setLoadingData(false)
             });
+
+        setTimeout(() => {
+            console.log('in settimeout');
+            setLoadingData(false)
+        }, 1000)
     }
+
     useEffect(() => {
         getProducts()
     }, []
+    )
+
+    useEffect(() => {
+        console.log('asdf', loadingData)
+    }, [loadingData]
     )
 
     return <>
@@ -52,7 +63,7 @@ export function ProductCard() {
                                 onClick={() => navigate(`/product-details/${r._id}`)}
                             />
                             <CardContent>
-                                <Typography sx={{ display: "-webkit-box", WebkitBoxOrient: "vertical", WebkitLineClamp: "1", overflow: "hidden" }} variant="body2" color="text.secondary">
+                                <Typography sx={{ maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: 'nowrap' }} variant="body2" color="text.secondary">
                                     {r.description}
                                 </Typography>
                             </CardContent>

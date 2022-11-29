@@ -63,10 +63,11 @@ export default function AdminProduct() {
     axios.delete(`${apiUrl.baseUrl}/admin/products/${i}`)
       .then((response) => {
         setApiResponse(prevApiResponse => {
-          let filteredData = prevApiResponse.products.filter(item => item._id !== i)
+          let filteredData = prevApiResponse.data.filter(item => item._id !== i)
+          console.log("g", prevApiResponse.data)
           return {
             ...prevApiResponse,
-            products: [...filteredData]
+            data: [...filteredData]
           }
         })
       })
@@ -122,16 +123,16 @@ export default function AdminProduct() {
                     <Typography fontWeight="bold" component="h2">{r.shortName}</Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography sx={{ display: "-webkit-box", WebkitBoxOrient: "vertical", WebkitLineClamp: "2", overflow: "hidden" }} fontWeight="bold" component="h2">{r.description}</Typography>
+                    <Typography sx={{ maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: 'nowrap' }} fontWeight="bold" component="h2">{r.description}</Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography fontWeight="bold" component="h2">{r.productCategory.name}</Typography>
+                    <Typography fontWeight="bold" component="h2">{r.productCategory ? r.productCategory.name : r.productCategory}</Typography>
                   </TableCell>
                   <TableCell align="right">
-                    <Stack  flexDirection="row" display={"flex"} gap="2%">
-                      <Button sx={{  bgcolor: "#ff867c", pl: "2px", width: "32%" }} type="button" variant="text" onClick={() => { deletepost(r._id) }}>Delete</Button>
-                      <Button sx={{  bgcolor: "#bbdefb", pl: "2px", width: "32%" }} type="button" variant="text" onClick={() => { editpost(r._id) }}>Update</Button>
-                      <Button sx={{  bgcolor: "#bbdefb", pl: "2px", width: "32%" }} onClick={handleProduct.bind(this, r)}>Details</Button>
+                    <Stack flexDirection="row" display={"flex"} gap="2%">
+                      <Button sx={{ bgcolor: "#ff867c", pl: "2px", width: "32%" }} type="button" variant="text" onClick={() => { deletepost(r._id) }}>Delete</Button>
+                      <Button sx={{ bgcolor: "#bbdefb", pl: "2px", width: "32%" }} type="button" variant="text" onClick={() => { editpost(r._id) }}>Update</Button>
+                      <Button sx={{ bgcolor: "#bbdefb", pl: "2px", width: "32%" }} onClick={handleProduct.bind(this, r)}>Details</Button>
                     </Stack>
                   </TableCell>
                 </TableRow>
@@ -165,7 +166,7 @@ export default function AdminProduct() {
             <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
               <Typography fontWeight="bold" component="h2">{slectedProduct?.name}</Typography>
               <Typography fontWeight="bold" component="h2">{slectedProduct?.shortName}</Typography>
-              <Typography fontWeight="bold" component="h2">{slectedProduct?.description}</Typography>
+              <Typography fontWeight="bold" sx={{ maxWidth: 200, overflow: "hidden", textOverflow: "unset" }} component="h2">{slectedProduct?.description}</Typography>
               <Typography fontWeight="bold" component="h2">{slectedProduct?.productCategory?.name}</Typography>
             </div>
           </div>

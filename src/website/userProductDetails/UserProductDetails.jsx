@@ -8,12 +8,10 @@ import { useParams } from 'react-router-dom';
 
 export default function UserProductDetails() {
   const [apiResponse, setApiResponse] = useState("")
-  const [loadingData, setLoadingData] = useState(false)
 
   let { id } = useParams();
 
   const {
-    setValue,
   } = useForm({
   });
 

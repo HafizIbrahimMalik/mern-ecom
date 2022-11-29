@@ -21,8 +21,8 @@ const schema = yup
   .object()
   .shape({
     id: yup.string(),
-    name: yup.string().required(),
-    shortName: yup.string().required(),
+    name: yup.string().max(10).required(),
+    shortName: yup.string().max(10).required(),
     description: yup.string().min(5).required(),
     productCategoryId: yup.string().required(),
     image: yup.mixed().required("required"),
