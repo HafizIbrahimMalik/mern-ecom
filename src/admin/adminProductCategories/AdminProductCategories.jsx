@@ -18,6 +18,7 @@ import AdminNavbar from '../adminLayouts/adminNavbar/AdminNavbar';
 export default function AdminProductCategories() {
   const [apiResponse, setApiResponse] = useState(null)
   const [loadingData, setLoadingData] = useState(false)
+  const navigate = useNavigate()
 
   function getProductList() {
     setLoadingData(true)
@@ -37,7 +38,6 @@ export default function AdminProductCategories() {
 
   useEffect(() => { getProductList() }, []
   )
-  const navigate = useNavigate()
   function deleteproductCategories(i) {
     axios.delete(`${apiUrl.baseUrl}/admin/productCategories/${i}`)
       .then((response) => {

@@ -23,7 +23,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import * as moment from 'moment'
 import { useAuth } from '../../authentication/AuthProvider';
-
 const schema = yup.object().shape({
     firstName: yup.string().required('First Name is required').min(5, 'Atleast 5 charcaters are requuired'),
     lastName: yup.string().required('Last Name is required').min(5, 'Atleast 5 charcaters are requuired'),
@@ -109,7 +108,7 @@ export default function SignUp() {
 
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={6}>
+                                <Grid item xs={6} sm={6}>
                                     <FormControl fullWidth>
                                         <InputLabel id="demo-simple-select-label">Role</InputLabel>
                                         <Select
@@ -127,7 +126,7 @@ export default function SignUp() {
                                         <FormHelperText error>{errors.role?.message}</FormHelperText>
                                     </FormControl>
                                 </Grid>
-                                <Grid item xs={12} sm={6}>
+                                <Grid item xs={6} sm={6}>
                                     <Controller
                                         control={control}
                                         name="dob"
@@ -139,6 +138,7 @@ export default function SignUp() {
                                                     label="Date of birth"
                                                     renderInput={(params) =>
                                                         <TextField
+                                                            className='dofFeild'
                                                             {...params}
                                                             error={!errors.dob?.type ? false : true}
                                                             helperText={errors.dob?.message}
