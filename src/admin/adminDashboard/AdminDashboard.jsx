@@ -5,7 +5,7 @@ import { useAuth } from '../../authentication/AuthProvider';
 import { useNavigate } from "react-router-dom";
 import { Fab, Tooltip, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import AdminNavbar from '../adminLayouts/adminNavbar/AdminNavbar';
+
 export default function AdminDashboard() {
   const { logout } = useAuth()
   const navigate = useNavigate()
