@@ -1,8 +1,8 @@
 const express = require('express')
 const router = express.Router()
-const ProductController = require("../controllers/product")
-const checkAuth = require('../middlewares/check-auth')
-const extractFile = require('../middlewares/file')
+const ProductController = require("../../controllers/admin-controllers/product")
+const checkAuth = require('../../middlewares/check-auth')
+const extractFile = require('../../middlewares/file')
 
 router.post('', checkAuth, extractFile, ProductController.CreateProduct)
 

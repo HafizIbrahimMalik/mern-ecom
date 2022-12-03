@@ -1,4 +1,4 @@
-const ProductCategory = require('../models/productCategory')
+const ProductCategory = require('../../models/productCategory')
 
 exports.CreateProductCategory = (req, res, next) => {     //router.productCategory to use request of productCategories   ii) multer(storage).single('image')   this function mean we expect single file with property name image from frontnend
     const productCategory = new ProductCategory({

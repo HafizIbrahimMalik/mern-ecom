@@ -4,8 +4,8 @@ const bodyParser = require('body-parser')    //this lib gives you extra artibute
 const mongoose = require('mongoose')
 const postsRoutes = require('./routes/posts')
 const userRoutes = require('./routes/user')
-const productCategoryRoutes = require('./routes/productCategory')
-const productRoutes = require('./routes/product')
+const productCategoryRoutes = require('./routes/admin-routes/productCategory')
+const productRoutes = require('./routes/admin-routes/product')
 const app = express()
 
 mongoose.connect(`mongodb+srv://root:${process.env.MONGO_ATLAS_PW}@mean-stack.otl2mlp.mongodb.net/mean-stack?retryWrites=true&w=majority`).then(() => {

@@ -1,4 +1,4 @@
-const Product = require('../models/product')
+const Product = require('../../models/product')
 
 exports.CreateProduct = (req, res, next) => {     //router.product to use request of product   ii) multer(storage).single('image')   this function mean we expect single file with property name image from frontnend
   console.log('as',req.body);

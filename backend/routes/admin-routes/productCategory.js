@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const ProductCategoriesController = require("../controllers/productCategories")
-const checkAuth = require('../middlewares/check-auth')
+const ProductCategoriesController = require("../../controllers/admin-controllers/productCategories")
+const checkAuth = require('../../middlewares/check-auth')
 
 router.post('', checkAuth, ProductCategoriesController.CreateProductCategory)
 
