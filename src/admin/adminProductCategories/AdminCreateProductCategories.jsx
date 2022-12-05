@@ -15,13 +15,12 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Stack } from '@mui/material';
-import AdminNavbar from '../adminLayouts/adminNavbar/AdminNavbar';
 const schema = yup
   .object()
   .shape({
     id: yup.string(),
-    name: yup.string().required(),
-    shortName: yup.string().required(),
+    name: yup.string().max(10).required(),
+    shortName: yup.string().max(10).required(),
     description: yup.string().min(5).required(),
   })
   .required();
@@ -46,14 +45,14 @@ export default function AdminCreateProductCategories() {
   useEffect(() => {
     if (searchParams.get('id')) {
       axios
-        .get(`${apiUrl.baseUrl}/admin/productCategories`, +searchParams.get('id'))
+        .get(`${apiUrl.baseUrl}/admin/productCategories/${searchParams.get('id')}`)
         .then((response) => {
           console.log(response)
-          setProductData({ ...response.data.data[0] })
-          setValue("name", response.data.data[0].name);
-          setValue("shortName", response.data.data[0].shortName);
-          setValue("description", response.data.data[0].description);
-          setValue("id", response.data.data[0]._id);
+          setProductData({ ...response.data.data })
+          setValue("name", response.data.data.name);
+          setValue("shortName", response.data.data.shortName);
+          setValue("description", response.data.data.description);
+          setValue("id", response.data.data._id);
         })
         .catch(function (error) {
           console.log(error);
@@ -95,11 +94,9 @@ export default function AdminCreateProductCategories() {
         setApiResponse(error.response.data);
       });
   }
-  console.log(apiResponse);
 
   return (
     <>
-      <AdminNavbar />
       <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
