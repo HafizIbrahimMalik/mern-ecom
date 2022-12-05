@@ -29,9 +29,9 @@ const style = {
 export default function AdminProduct() {
   const [apiResponse, setApiResponse] = useState(null)
   const [loadingData, setLoadingData] = useState(false)
+  const [slectedProduct, setSlectedProduct] = useState({})
   const navigate = useNavigate()
   const [open, setOpen] = useState(false);
-  const [slectedProduct, setSlectedProduct] = useState({})
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 

@@ -24,18 +24,18 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
-export default function AdminProductCategories() {
+export default function AdminUser() {
   const [apiResponse, setApiResponse] = useState(null)
   const [loadingData, setLoadingData] = useState(false)
-  const [slectedProductCategories, setSlectedProductCategories] = useState({})
+  const [slectedUser, setSlectedUser] = useState({})
 
   const navigate = useNavigate()
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  function getProductList() {
+  function getUserList() {
     setLoadingData(true)
-    axios.get(`${apiUrl.baseUrl}/admin/productCategories`)
+    axios.get(`${apiUrl.baseUrl}/admin/users`)
       .then((response) => {
         setApiResponse(response.data)
         setLoadingData(false)
@@ -49,10 +49,10 @@ export default function AdminProductCategories() {
       });
   }
 
-  useEffect(() => { getProductList() }, []
+  useEffect(() => { getUserList() }, []
   )
-  function deleteproductCategories(i) {
-    axios.delete(`${apiUrl.baseUrl}/admin/productCategories/${i}`)
+  function deleteUser(i) {
+    axios.delete(`${apiUrl.baseUrl}/admin/users/${i}`)
       .then((response) => {
         setApiResponse(prevApiResponse => {
           let filteredData = prevApiResponse.data.filter(item => item._id !== i)
@@ -67,50 +67,58 @@ export default function AdminProductCategories() {
         setApiResponse(error.response.data)
       });
   }
-  function editproductCategories(i) {
+  function editUser(i) {
     navigate({
-      pathname: '/admin/create-productCategories',
+      pathname: '/admin/create-user',
       search: `?id=${i}`
     })
   }
 
-  function handleProductCategories(productCategories) {
-    setSlectedProductCategories(productCategories)
+  function handleUser(user) {
+    setSlectedUser(user)
     handleOpen()
   }
   return (
     <>
       <Stack sx={{ mt: 2 }}>
-        <Button sx={{ width: { sm: "fit-content", xs: "96%" }, pr: 6, marginLeft: { sm: "auto", xs: "auto" } }} onClick={() => navigate('/admin/create-productCategories')}>Create Product Category</Button>
+        <Button sx={{ width: { sm: "fit-content", xs: "96%" }, pr: 6, marginLeft: { sm: "auto", xs: "auto" } }} onClick={() => navigate('/admin/create-user')}>Create User</Button>
       </Stack>
       <TableContainer component={Paper} sx={{ width: { width: "60%", xs: "96%" }, margin: "auto", marginTop: 1 }}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ width: "25%", p: 0, pl: 1, pt: 4, pb: 4 }}>Name</TableCell>
-              <TableCell sx={{ width: "25%", p: 0, pt: 4, pb: 4 }}>Short Name</TableCell>
-              <TableCell sx={{ width: "25%", p: 0, pt: 4, pb: 4 }}>Descriptions</TableCell>
-              <TableCell sx={{ width: "25%", p: 0, pt: 4, pb: 4 }} align='center'>Action</TableCell>
+              <TableCell sx={{ width: "16%", p: 0, pl: 1, pt: 4, pb: 4 }}>First Name</TableCell>
+              <TableCell sx={{ width: "16%", p: 0, pt: 4, pb: 4 }}>Last Name</TableCell>
+              <TableCell sx={{ width: "16%", p: 0, pt: 4, pb: 4 }}>Email</TableCell>
+              <TableCell sx={{ width: "16%", p: 0, pt: 4, pb: 4 }}>Role</TableCell>
+              <TableCell sx={{ width: "16%" }} >Date of birth</TableCell>
+              <TableCell sx={{ width: "17%" }} >Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {
               apiResponse?.data.map((r) => {
                 return <TableRow key={r._id}>
-                  <TableCell sx={{ width: "25%", p: 0, pl: 1, pt: 4, pb: 2 }}>
-                    <Typography fontWeight="bold" component="h2">{r.name}</Typography>
+                  <TableCell sx={{ width: "16%", p: 0, pl: 1, pt: 4, pb: 2 }}>
+                    <Typography fontWeight="bold" component="h2">{r.firstName}</Typography>
                   </TableCell >
-                  <TableCell sx={{ width: "25%", p: 0, pl: 1, pt: 4, pb: 2 }}>
-                    <Typography fontWeight="bold" component="h2">{r.shortName}</Typography>
+                  <TableCell sx={{ width: "16%", p: 0, pl: 1, pt: 4, pb: 2 }}>
+                    <Typography fontWeight="bold" component="h2">{r.lastName}</Typography>
                   </TableCell>
-                  <TableCell sx={{ width: "25%", p: 0, pl: 1, pt: 4, pb: 2 }}>
-                    <Typography fontWeight="bold" component="h2" sx={{ maxWidth: 100, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: 'nowrap' }}>{r.description}</Typography>
+                  <TableCell sx={{ width: "16%", p: 0, pl: 1, pt: 4, pb: 2 }}>
+                    <Typography fontWeight="bold" component="h2">{r.email}</Typography>
                   </TableCell>
-                  <TableCell sx={{ width: "25%", p: 0, pl: 1, pt: 4, pb: 2 }} align="right">
+                  <TableCell sx={{ width: "16%", p: 0, pl: 1, pt: 4, pb: 2 }}>
+                    <Typography fontWeight="bold" component="h2">{r.role}</Typography>
+                  </TableCell>
+                  <TableCell sx={{ width: "16%", p: 0, pl: 1, pt: 4, pb: 2 }}>
+                    <Typography fontWeight="bold" component="h2">{r.dob}</Typography>
+                  </TableCell>
+                  <TableCell sx={{ width: "17%", p: 0, pl: 1, pt: 4, pb: 2 }} align="right">
                     <Stack align="center" display="block" flexDirection="row">
-                      <Button sx={{ bgcolor: "#ff867c" }} onClick={() => { deleteproductCategories(r._id) }}>Delete</Button>
-                      <Button sx={{ bgcolor: "#bbdefb" }} onClick={() => { editproductCategories(r._id) }}>Update</Button>
-                      <Button sx={{ bgcolor: "#bbdefb" }} onClick={handleProductCategories.bind(this, r)}>Details</Button>
+                      <Button sx={{ bgcolor: "#ff867c" }} onClick={() => { deleteUser(r._id) }}>Delete</Button>
+                      <Button sx={{ bgcolor: "#bbdefb" }} onClick={() => { editUser(r._id) }}>Update</Button>
+                      <Button sx={{ bgcolor: "#bbdefb" }} onClick={handleUser.bind(this, r)}>Details</Button>
                     </Stack>
                   </TableCell>
                 </TableRow>
@@ -138,15 +146,11 @@ export default function AdminProductCategories() {
         <Box sx={style}>
           <Stack sx={{ display: "flex", gap: "72px" }}>
             <Stack sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-              <Typography fontWeight="bold" component="h2">{slectedProductCategories?.name}</Typography>
-              <Typography fontWeight="bold" component="h2">{slectedProductCategories?.shortName}</Typography>
-              <Typography fontWeight="bold" sx={{
-                overflow: 'auto',
-                textOverflow: 'ellipsis',
-                display: '-webkit-box',
-                WebkitLineClamp: '2',
-                WebkitBoxOrient: 'vertical',
-              }} component="h2">{slectedProductCategories?.description}</Typography>
+              <Typography fontWeight="bold" component="h2">{slectedUser?.firstName}</Typography>
+              <Typography fontWeight="bold" component="h2">{slectedUser?.lastName}</Typography>
+              <Typography fontWeight="bold" component="h2">{slectedUser?.email}</Typography>
+              <Typography fontWeight="bold" component="h2">{slectedUser?.role}</Typography>
+              <Typography fontWeight="bold" component="h2">{slectedUser?.dob}</Typography>
             </Stack>
           </Stack>
           <Box

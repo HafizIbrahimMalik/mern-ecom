@@ -15,6 +15,8 @@ import UserNavbar from "./website/userNavbar/UserNavbar";
 import { AdminProtectedRoute } from "./authentication/AdminProtectedRoute";
 import { AdminLandingPage } from "./admin/adminLayouts/AdminLandingPage";
 import UserProductDetails from "./website/userProductDetails/UserProductDetails";
+import AdminUser from "./admin/adminUser/AdminUser";
+import AdminCreateUser from "./admin/adminUser/AdminCreateUser";
 function App() {
   return (
     <>
@@ -32,7 +34,7 @@ function App() {
                   <SignIn />
                 </UnProtectedRoute>
               } />
-              <Route path='landingPage' element={
+              <Route path='/' element={
                 <LandingPage />
               } />
               <Route path='product-details/:id' element={
@@ -89,6 +91,22 @@ function App() {
                   element={
                     <AdminProtectedRoute>
                       <AdminProduct />
+                    </AdminProtectedRoute>
+                  }
+                />
+                <Route
+                  path="users"
+                  element={
+                    <AdminProtectedRoute>
+                      <AdminUser />
+                    </AdminProtectedRoute>
+                  }
+                />
+                <Route
+                  path="create-user"
+                  element={
+                    <AdminProtectedRoute>
+                      <AdminCreateUser />
                     </AdminProtectedRoute>
                   }
                 />

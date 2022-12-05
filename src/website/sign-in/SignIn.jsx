@@ -108,9 +108,8 @@ export default function SignIn() {
                                 sx={{ mt: 3, mb: 2 }}>
                                 Sign In
                             </Button>
-
                         </Box>
-                    </Box><Typography component="p" sx={{ color: "blue", wl: 20, cursor: "pointer", width: "fit-content", ml: "auto", textDecoration: "underline" }} onClick={() => navigate('/sign-up')}>Sign Up</Typography>
+                    </Box><Typography component="p" disableUnderline sx={{ color: "blue", wl: 20, '&:hover': { color: "blue" }, color: "cornflowerblue", cursor: "pointer", width: "fit-content", ml: "auto" }} onClick={() => navigate('/sign-up')}>Sign Up</Typography>
                 </Container>
             </ThemeProvider>
         </>
