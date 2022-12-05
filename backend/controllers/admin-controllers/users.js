@@ -85,7 +85,7 @@ exports.CreateUser = async (req, res, next) => {     //router.post to use reques
 
 exports.GetUsers = (req, res, next) => {
     const paginationDetails = { ...req.query }
-    const usersQuery = User.find().populate(['seller','buyer'])
+    const usersQuery = User.find().populate(['seller', 'buyer'])
     if (+paginationDetails.pageSize && +paginationDetails.pageIndex) {
         usersQuery
             .skip(+paginationDetails.pageSize * (+paginationDetails.pageIndex - 1))   //  (paginationDetails.pageIndex - 1) this mean to skip previous pages data
@@ -112,3 +112,86 @@ exports.GetUsers = (req, res, next) => {
     })
 }
 
+exports.UpdateUser = (req, res, next) => {     //router.productCategory to use request of productCategories
+    let updateData = null
+    let collectionToUpdate = SellerUser
+    updateData = new SellerUser({
+        _id: req.body.id,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        dob: req.body.dob ? req.body.dob : null,
+    })
+    if (req.body.role === 'buyer') {
+        collectionToUpdate = BuyerUser
+        updateData = new BuyerUser({
+            _id: req.body.id,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            dob: req.body.dob ? req.body.dob : null,
+        })
+    }
+    collectionToUpdate.updateOne({ _id: req.body.id }, updateData).then((updatedUser) => {   //get results after saving so we can send newly generated productCategory id to frotnend
+        if (updatedUser.matchedCount > 0) {    //its shows us if user with creted productCategory id is the user who is editing productCategory. if true it will resturn > 0 result else it will be 0 modified
+            return res.status(201).json({   //we can send status codes as here we are sending 201 that resource is addedd successfully
+                message: 'User update successfully',
+                success: true
+            })
+        }
+    }).catch(err => {
+        res.status(500).json({
+            message: err.errors,
+            success: false
+        })
+    })
+}
+
+exports.GetUser = (req, res, next) => {
+    User.findById(req.params.id).populate(['seller', 'buyer']).then(user => {
+        if (user) {
+            return res.status(200).json({
+                message: 'User fetched successfully',
+                data: user,
+                success: true
+            })
+        }
+        return res.status(404).json({
+            message: 'User not found',
+            data: null,
+            success: false
+        })
+
+    }).catch(err => {
+        res.status(500).json({
+            message: "Something went wrong. Please contact your service provider",
+            success: false
+        })
+    })
+}
+
+exports.DeleteUser = (req, res, next) => {   //we can get this :id in req.params which is an expressJs object which will contain req.params.id in thisf case
+    if (req.params.id === '638c862177e76311619b8c7a') {
+        return res.status(500).json({
+            message: "You can,t delete super admin.",
+            error: 'Trying to breach restricted account.',
+            success: false
+        })
+    }
+    User.findByIdAndDelete({ _id: req.params.id }).then(result => {
+        if (result.role === 'buyer') {
+            return BuyerUser.deleteOne({ user: req.params.id }).then(result => {
+                if (result.deletedCount > 0) {
+                    return res.status(200).json({
+                        message: 'User deleted successfully',
+                        success: true
+                    })
+                }
+            })
+        }
+    }).catch(err => {
+        return res.status(500).json({
+            message: "User Deleting failed",
+            error: err.errors,
+            success: false
+        })
+    })
+}

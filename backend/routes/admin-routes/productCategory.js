@@ -7,9 +7,9 @@ router.post('', checkAuth, ProductCategoriesController.CreateProductCategory)
 
 router.put('/:id', checkAuth, ProductCategoriesController.UpdateProductCategory)
 
-router.get('', ProductCategoriesController.GetProductCategories)
+router.get('', checkAuth,  ProductCategoriesController.GetProductCategories)
 
-router.get('/:id', ProductCategoriesController.GetProductCategory)
+router.get('/:id', checkAuth,  ProductCategoriesController.GetProductCategory)
 
 router.delete('/:id', checkAuth, ProductCategoriesController.DeleteProductCategory)
 

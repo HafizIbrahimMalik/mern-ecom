@@ -5,12 +5,12 @@ const checkAuth = require('../../middlewares/check-auth')
 
 router.post('', checkAuth, UsersController.CreateUser)
 
-// router.put('/:id', checkAuth, UsersController.UpdateProductCategory)
+router.put('/:id', checkAuth, UsersController.UpdateUser)
 
-router.get('', UsersController.GetUsers)
+router.get('', checkAuth,  UsersController.GetUsers)
 
-// router.get('/:id', UsersController.GetProductCategory)
+router.get('/:id', checkAuth,  UsersController.GetUser)
 
-// router.delete('/:id', checkAuth, UsersController.DeleteProductCategory)
+router.delete('/:id', checkAuth, UsersController.DeleteUser)
 
 module.exports = router
