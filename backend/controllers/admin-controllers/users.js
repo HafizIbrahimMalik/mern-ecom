@@ -19,16 +19,19 @@ exports.CreateUser = async (req, res, next) => {     //router.post to use reques
             const session = await mongoose.startSession();
             session.startTransaction();
             const opts = { session };
+            const userRoleId = mongoose.Types.ObjectId()
 
             const userCollectionData = new User({
                 email: req.body.email,
                 password: hash,
                 role: req.body.role,
+                [req.body.role]: userRoleId
             })
             userCollectionData.save(opts).then(createdUser => {   //get results after saving so we can send newly generated post id to frotnend
                 let userTypeCollectionData = null
                 if (req.body.role === 'buyer') {
                     userTypeCollectionData = new BuyerUser({
+                        _id: userRoleId,
                         user: createdUser._id,
                         firstName: req.body.firstName,
                         lastName: req.body.lastName,
@@ -37,6 +40,7 @@ exports.CreateUser = async (req, res, next) => {     //router.post to use reques
                     })
                 } else {
                     userTypeCollectionData = new SellerUser({
+                        _id: userRoleId,
                         user: createdUser._id,
                         firstName: req.body.firstName,
                         lastName: req.body.lastName,
