@@ -11,13 +11,14 @@ export default function AdminDashboard() {
   const navigate = useNavigate()
   return (
     <>
-      <AdminNavbar />
       <Stack sx={{ mt: 20, width: { width: "15%", lg: '25%', md: '50%', sm: '50%', xs: '95%' } }} margin="auto">
-        <Button sx={{ p: 2 }} color="secondary" variant="outlined" onClick={() => navigate('/admin/product-categories')}><Typography width="100%"> Product Category</Typography></Button>
-        <Button sx={{ p: 2 }} color="secondary" variant="outlined" onClick={() => navigate('/admin/create-productCategories')}><Typography width="100%">Create Product Categories</Typography></Button>
+        <Button sx={{ p: 1, mb: 2 }} variant="contained" onClick={() => navigate('/admin/create-user')}>Create User </Button>
+        <Button sx={{ p: 1, mb: 2 }} variant="contained" onClick={() => navigate('/admin/users')}>Users </Button>
+        <Button sx={{ p: 1, mb: 2 }} color="secondary" variant="outlined" onClick={() => navigate('/admin/product-categories')}><Typography width="100%"> Product Category</Typography></Button>
+        <Button sx={{ p: 1, mb: 2 }} color="secondary" variant="outlined" onClick={() => navigate('/admin/create-productCategories')}><Typography width="100%">Create Product Categories</Typography></Button>
         <Button sx={{ p: 1, mb: 2 }} color="success" variant="text" onClick={() => navigate('/admin/product')}> Product </Button>
         <Button sx={{ p: 1, mb: 2 }} color="success" variant="text" onClick={() => navigate('/admin/create-product')}>Create Product </Button>
-        <Button sx={{ mt: 5 }} variant="contained" onClick={logout}>logout</Button>
+        <Button sx={{ mt: 5 }} color="error" variant="contained" onClick={logout}>logout</Button>
         <Fab
           color="success"
           sx={{
@@ -39,6 +40,19 @@ export default function AdminDashboard() {
           }}
           onClick={() => navigate('/admin/create-productCategories')}>
           <Tooltip title="Create Product Category" placement="right-start">
+            <AddIcon />
+          </Tooltip>
+        </Fab>
+        <Fab
+        color="primary"
+          sx={{
+            position: 'absolute',
+            bottom: (theme) => theme.spacing(22),
+            right: (theme) => theme.spacing(2),
+          }}
+          onClick={() => navigate('/admin/create-user')}>
+            
+          <Tooltip  title="Create User" placement="right-start">
             <AddIcon />
           </Tooltip>
         </Fab>
