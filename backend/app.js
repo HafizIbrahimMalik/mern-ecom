@@ -2,10 +2,15 @@ const path = require('path')
 const express = require('express')     //syntax to import libraries e.g require('your library)
 const bodyParser = require('body-parser')    //this lib gives you extra artibute as res.body which will parse the incomming json from client side
 const mongoose = require('mongoose')
+//Webiste routes import
 const postsRoutes = require('./routes/posts')
 const userRoutes = require('./routes/user')
+//Admin routes import
 const productCategoryRoutes = require('./routes/admin-routes/productCategory')
 const productRoutes = require('./routes/admin-routes/product')
+const adminUserRoutes = require('./routes/admin-routes/user')
+
+
 const app = express()
 
 mongoose.connect(`mongodb+srv://root:${process.env.MONGO_ATLAS_PW}@mean-stack.otl2mlp.mongodb.net/mean-stack?retryWrites=true&w=majority`).then(() => {
@@ -28,10 +33,14 @@ app.use((req, res, next) => {   //Allows cors to send req from client side if cl
   next()
 })
 
+// Website routes
 app.use('/api/posts',postsRoutes)
 app.use('/api/user',userRoutes)
+
+//Admin routes
 app.use('/api/admin/productCategories',productCategoryRoutes)
 app.use('/api/admin/products',productRoutes)
+app.use('/api/admin/users',adminUserRoutes)
 
 
 module.exports = app

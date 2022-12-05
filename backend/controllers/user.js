@@ -19,16 +19,18 @@ exports.createUser = async (req, res, next) => {     //router.post to use reques
       const session = await mongoose.startSession();
       session.startTransaction();
       const opts = { session };
-
+      const userRoleId = mongoose.Types.ObjectId()
       const userCollectionData = new User({
         email: req.body.email,
         password: hash,
         role: req.body.role,
+        [req.body.role]: userRoleId
       })
       userCollectionData.save(opts).then(createdUser => {   //get results after saving so we can send newly generated post id to frotnend
         let userTypeCollectionData = null
         if (req.body.role === 'buyer') {
           userTypeCollectionData = new BuyerUser({
+            _id: userRoleId,
             user: createdUser._id,
             firstName: req.body.firstName,
             lastName: req.body.lastName,
@@ -37,6 +39,7 @@ exports.createUser = async (req, res, next) => {     //router.post to use reques
           })
         } else {
           userTypeCollectionData = new SellerUser({
+            _id: userRoleId,
             user: createdUser._id,
             firstName: req.body.firstName,
             lastName: req.body.lastName,
@@ -93,8 +96,7 @@ exports.userLogin = (req, res, next) => {
         message: 'User with this email not found',
         error: 'No User Found',
         success: false
-      }.catch(err => {
-      })
+      }
     }
     return bcrypt.compare(req.body.password, user.password)   //as we cant dcrypt the encrypted password that we stored in database we can compare by making hash to requested pasword with database password
   })
@@ -104,8 +106,7 @@ exports.userLogin = (req, res, next) => {
           message: 'Please make sure your credentials are correct',
           error: 'invalid Credentials',
           success: false
-        }.catch(err => {
-        })
+        }
       }
       const token = jwt.sign({ email: fetechedUser.email, userId: fetechedUser._id },
         process.env.JWT_KEY,
@@ -132,8 +133,8 @@ exports.userLogin = (req, res, next) => {
     })
     .catch(err => {
       res.status(401).json({   //we can send status codes as here we are sending 500 that is server side error
-        message: 'Something went wrong. Contact to service provider',
-        error: err.errors,
+        message: err.hasOwnProperty('message') ? err.message : 'Something went wrong. Contact to service provider',
+        error: err.hasOwnProperty('error') ? err.error : err.errors,
         success: false
       })
     })
