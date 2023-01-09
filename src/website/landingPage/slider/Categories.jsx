@@ -33,7 +33,7 @@ export function Categories() {
           {
             ...prevSettings,
             slidesToShow: response.data.data.length < 3 ? response.data.data.length : 3
-          }))
+          })) 
         setLoadingData(false)
         console.log(response.data)
 
@@ -54,7 +54,7 @@ export function Categories() {
         {!loadingData &&
           <Slider  {...settings}>
             {
-              apiResponse.data.map((item) => {
+              apiResponse.data?.map((item) => {
                 return <Stack className='slide' key={item._id}>
 
                   <Typography variant="h4">{item.name}</Typography>

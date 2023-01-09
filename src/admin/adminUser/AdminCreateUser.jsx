@@ -19,44 +19,19 @@ import apiUrl from '../../environment/enviroment';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import * as moment from 'moment'
-import { useAuth } from '../../authentication/AuthProvider';
 const schema = yup.object().shape({
     firstName: yup.string().required('First Name is required').min(5, 'Atleast 5 charcaters are requuired'),
     lastName: yup.string().required('Last Name is required').min(5, 'Atleast 5 charcaters are requuired'),
     email: yup.string().required().email(),
-    password: yup.string().required().min(5),
+    password: yup.string().min(5).required(),
     role: yup.string().required(),
     dob: yup.string().required()
 }).required();
 const theme = createTheme();
 export default function AdminCreateUser() {
-    const { login } = useAuth()
     const [apiResponse, setApiResponse] = useState(null)
     const navigate = useNavigate()
     const [, setUserData] = useState(null);
-    function onSubmit(formData) {
-        formData['dob'] = moment(formData['dob']).format('YYYY-MM-DD')
-        axios.post(`${apiUrl.baseUrl}/admin/users`, {
-            ...formData
-        })
-            .then((response) => {
-                console.log('backend repsonse', response);
-                setApiResponse(response.data)
-                login(response.data.data)
-            })
-            .catch(function (error) {
-                console.log('Backend Not Responsed', error);
-                setApiResponse(error.response.data)
-            });
-    }
-    function onSubmit(formData) {
-        if (searchParams.get('id')) {
-            editData(formData, searchParams.get('id'))
-        } else {
-            addData(formData)
-        }
-    }
     let [searchParams] = useSearchParams();
     const {
         handleSubmit,
@@ -68,19 +43,19 @@ export default function AdminCreateUser() {
         mode: "all",
         resolver: yupResolver(schema),
     });
-
     useEffect(() => {
         if (searchParams.get('id')) {
             axios
                 .get(`${apiUrl.baseUrl}/admin/users/${searchParams.get('id')}`)
                 .then((response) => {
-                    console.log(response)
-                    setUserData({ ...response.data.data })
-                    setValue("FirstName", response.data.data.firstName);
-                    setValue("LastName", response.data.data.lastName);
-                    setValue("Role", response.data.data.role);
-                    setValue("Date of Birth", response.data.data.dob);
-                    setValue("Email", response.data.data.email);
+                    console.log(response.data.data[response.data.data.role]._id)
+                    setUserData({ ...response.data })
+                    setValue("firstName", response.data.data[response.data.data.role].firstName);
+                    setValue("lastName", response.data.data[response.data.data.role].lastName);
+                    setValue("role", response.data.data.role);
+                    setValue("dob", response.data.data[response.data.data.role].dob);
+                    setValue("email", response.data.data[response.data.data.role].email);
+                    setValue("password", response.data.data[response.data.data.role].password);
                     setValue("id", response.data.data._id);
                 })
                 .catch(function (error) {
@@ -90,14 +65,6 @@ export default function AdminCreateUser() {
         }
     }, []
     )
-    function onSubmit(formData) {
-        if (searchParams.get('id')) {
-            editData(formData, searchParams.get('id'))
-        } else {
-            addData(formData)
-        }
-    }
-
     function addData(fData) {
         axios
             .post(`${apiUrl.baseUrl}/admin/users`, fData)
@@ -106,9 +73,25 @@ export default function AdminCreateUser() {
                 navigate('/admin/users')
             })
             .catch(function (error) {
-                console.log(error);
+                console.log(error.response.data);
                 setApiResponse(error.response.data);
             });
+    }
+
+    function onSubmit(formData) {
+        let fData = new FormData();
+        fData.append("firstName", formData.firstName);
+        fData.append("lastName", formData.lastName);
+        fData.append("role", formData.role);
+        fData.append("dob", formData.dob);
+        fData.append("email", formData.email);
+        fData.append("password", formData.password);
+        if (searchParams.get('id')) {
+            editData(formData, searchParams.get('id'))
+            // editData(fData, searchParams.get('id'))
+        } else {
+            addData(fData)
+        }
     }
 
     function editData(fData, id) {
@@ -149,47 +132,55 @@ export default function AdminCreateUser() {
                         <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3 }}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12} sm={6}>
-                                    <TextField
-                                        error={!errors.firstName?.type ? false : true}
-                                        autoComplete="given-name"
+                                    <Controller
+                                        control={control}
                                         name="firstName"
-                                        required
-                                        fullWidth
-                                        id="firstName"
-                                        label="First Name"
-                                        helperText={errors.firstName?.message}
-                                        {...register("firstName")}
-                                    />
+                                        defaultValue=""
+                                        render={({ field }) => (
+                                            <TextField
+                                                error={!errors.firstName?.type ? false : true}
+                                                helperText={errors.firstName?.message}
+                                                {...field}
+                                                fullWidth
+                                                label="First Name"
+                                            />
+                                        )} />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
-                                    <TextField
-                                        error={!errors.lastName?.type ? false : true}
-                                        helperText={errors.lastName?.message}
-                                        {...register("lastName")}
-                                        required
-                                        fullWidth
-                                        id="lastName"
-                                        label="Last Name"
+                                    <Controller
+                                        control={control}
                                         name="lastName"
-                                        autoComplete="family-name"
-
-                                    />
+                                        defaultValue=""
+                                        render={({ field }) => (
+                                            <TextField
+                                                error={!errors.lastName?.type ? false : true}
+                                                helperText={errors.lastName?.message}
+                                                {...field}
+                                                fullWidth
+                                                label="Last Name"
+                                            />
+                                        )} />
                                 </Grid>
                                 <Grid item xs={6} sm={6}>
                                     <FormControl fullWidth>
                                         <InputLabel id="demo-simple-select-label">Role</InputLabel>
-                                        <Select
-                                            labelId="demo-simple-select-label"
-                                            id="demo-simple-select"
-                                            defaultValue='buyer'
-                                            label="Role"
-                                            error={!errors.role?.type ? false : true}
-                                            {...register("role")}
-                                        >
-                                            <MenuItem value='admin'>Admin</MenuItem>
-                                            <MenuItem value='seller'>Seller</MenuItem>
-                                            <MenuItem value='buyer'>Buyer</MenuItem>
-                                        </Select>
+                                        <Controller
+                                            control={control}
+                                            name="role"
+                                            defaultValue="Buyer"
+                                            render={({ field }) => (
+                                                <Select
+                                                    fullWidth
+                                                    labelId="demo-simple-select-label"
+                                                    id="demo-simple-select"
+                                                    label="role"
+                                                    error={!errors.role?.type ? false : true}
+                                                    {...field}
+                                                >
+                                                    <MenuItem value='admin'>Admin</MenuItem>
+                                                    <MenuItem value='seller'>Seller</MenuItem>
+                                                    <MenuItem value='buyer'>Buyer</MenuItem>
+                                                </Select>)} />
                                         <FormHelperText error>{errors.role?.message}</FormHelperText>
                                     </FormControl>
                                 </Grid>
@@ -215,33 +206,53 @@ export default function AdminCreateUser() {
                                         }
                                     />
                                 </Grid>
-                                <Grid item xs={12}>
-                                    <TextField
-                                        error={!errors.email?.type ? false : true}
-                                        helperText={errors.email?.message}
-                                        {...register("email")}
-                                        required
-                                        fullWidth
-                                        id="email"
-                                        label="Email Address"
+                                {!searchParams.get('id') ? <Grid item xs={12} sx={{ display: "flex", flexDirection: "column", gap: "13px" }}><Grid item xs={12} >
+                                    <Controller
+                                        control={control}
                                         name="email"
-                                        autoComplete="email"
-                                    />
+                                        defaultValue=""
+                                        render={({ field }) => (
+                                            <TextField
+                                                error={!errors.email?.type ? false : true}
+                                                helperText={errors.email?.message}
+                                                {...field}
+                                                fullWidth
+                                                label="Email"
+                                            />
+                                        )} />
                                 </Grid>
-                                <Grid item xs={12}>
-                                    <TextField
-                                        error={!errors.password?.type ? false : true}
-                                        helperText={errors.password?.message}
-                                        {...register("password")}
-                                        required
-                                        fullWidth
-                                        name="password"
-                                        label="Password"
-                                        type="password"
-                                        id="password"
-                                        autoComplete="new-password"
-                                    />
-                                </Grid>
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            error={!errors.password?.type ? false : true}
+                                            helperText={errors.password?.message}
+                                            {...register("password")}
+                                            required
+                                            fullWidth
+                                            name="password"
+                                            label="Password"
+                                            type="password"
+                                            id="password"
+                                            autoComplete="new-password"
+                                        />
+                                    </Grid></Grid> :
+
+                                    <Grid item xs={12}>
+                                        <Controller
+                                            control={control}
+                                            name="email"
+                                            defaultValue=""
+                                            render={({ field }) => (
+                                                <TextField
+                                                    error={!errors.email?.type ? false : true}
+                                                    helperText={errors.email?.message}
+                                                    {...field}
+                                                    fullWidth
+                                                    label="Email"
+                                                    disabled
+                                                />
+                                            )} />
+                                    </Grid>
+                                }
                             </Grid>
                             <Button
                                 onClick={handleSubmit}

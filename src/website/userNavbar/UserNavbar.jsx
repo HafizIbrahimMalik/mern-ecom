@@ -7,6 +7,7 @@ import Button from '@mui/material/Button';
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import { useAuth } from '../../authentication/AuthProvider';
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
@@ -39,7 +40,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 export function UserNavbar() {
-
+  const { logout } = useAuth()
   return (
     <Box>
       <AppBar component="nav">
@@ -56,10 +57,13 @@ export function UserNavbar() {
                 inputProps={{ 'aria-label': 'search' }}
               />
             </Search>
-            <Button sx={{ left: "auto", right: "16px", '&:hover': { backgroundColor: "skyblue" ,borderRadius:"1px"} }}><SearchOutlinedIcon sx={{ color: 'white' }} /></Button>
+            <Button sx={{ left: "auto", right: "16px", '&:hover': { backgroundColor: "skyblue", borderRadius: "1px" } }}><SearchOutlinedIcon sx={{ color: 'white' }} /></Button>
           </Box>
           <Button sx={{ color: '#fff' }}>
             Home
+          </Button>
+          <Button  sx={{color:"#fff"}} onClick={logout}>
+            logout
           </Button>
         </Toolbar>
       </AppBar>

@@ -34,7 +34,7 @@ export default function UserProductDetails() {
       <div style={{ width: "60%", width: "31%", margin: "auto", padding: "5px" }}>
         <Card sx={{ mt: 8 }}>
           <CardHeader
-            sx={{color:"blue"}}
+            sx={{ color: "blue" }}
             title={apiResponse?.data?.name}
             subheader={apiResponse?.data?.shortName} />
           <CardMedia

@@ -42,7 +42,7 @@ export default function AdminCreateProduct() {
   const [productCategories, setProductCategories] = useState([])
 
   const {
-    register,
+    
     handleSubmit,
     setValue,
     control,
@@ -60,7 +60,7 @@ export default function AdminCreateProduct() {
       axios
         .get(`${apiUrl.baseUrl}/admin/products/${searchParams.get('id')}`)
         .then((response) => {
-          console.log('asdf',response.data.data)
+          console.log('asdf', response.data.data.productCategory._id)
           setSelectedImage(response.data.data.imagePath)
           setImageFile(response.data.data.imagePath)
           setValue("id", response.data.data._id);
@@ -117,18 +117,6 @@ export default function AdminCreateProduct() {
       .catch(function (error) {
         console.log(error);
         setProductCategories(error.response.data)
-      });
-  }
-  function addData(fData) {
-    axios
-      .post(`${apiUrl.baseUrl}/admin/products`, fData)
-      .then((response) => {
-        setApiResponse(response.data);
-        navigate('/admin/product')
-      })
-      .catch(function (error) {
-        console.log(error);
-        setApiResponse(error.response.data);
       });
   }
 
@@ -242,7 +230,7 @@ export default function AdminCreateProduct() {
 
                   <Grid item xs={12}>
                     <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">Product Category ID</InputLabel>
+                      <InputLabel id="demo-simple-select-label">Product Category</InputLabel>
                       <Controller
                         control={control}
                         name="productCategoryId"

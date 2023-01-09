@@ -97,13 +97,13 @@ export default function AdminUser() {
           </TableHead>
           <TableBody>
             {
-              apiResponse?.data.map((r) => {
+              apiResponse?.data?.map((r) => {
                 return <TableRow key={r._id}>
                   <TableCell sx={{ width: "16%", p: 0, pl: 1, pt: 4, pb: 2 }}>
-                    <Typography fontWeight="bold" component="h2">{r.firstName}</Typography>
+                    <Typography fontWeight="bold" component="h2">{r[r.role]?.firstName}</Typography>
                   </TableCell >
                   <TableCell sx={{ width: "16%", p: 0, pl: 1, pt: 4, pb: 2 }}>
-                    <Typography fontWeight="bold" component="h2">{r.lastName}</Typography>
+                    <Typography fontWeight="bold" component="h2">{r[r.role]?.lastName}</Typography>
                   </TableCell>
                   <TableCell sx={{ width: "16%", p: 0, pl: 1, pt: 4, pb: 2 }}>
                     <Typography fontWeight="bold" component="h2">{r.email}</Typography>
@@ -112,7 +112,7 @@ export default function AdminUser() {
                     <Typography fontWeight="bold" component="h2">{r.role}</Typography>
                   </TableCell>
                   <TableCell sx={{ width: "16%", p: 0, pl: 1, pt: 4, pb: 2 }}>
-                    <Typography fontWeight="bold" component="h2">{r.dob}</Typography>
+                    <Typography fontWeight="bold" component="h2">{r[r.role]?.dob}</Typography>
                   </TableCell>
                   <TableCell sx={{ width: "17%", p: 0, pl: 1, pt: 4, pb: 2 }} align="right">
                     <Stack align="center" display="block" flexDirection="row">
