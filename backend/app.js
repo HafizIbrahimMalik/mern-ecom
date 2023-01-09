@@ -5,6 +5,9 @@ const mongoose = require('mongoose')
 //Webiste routes import
 const postsRoutes = require('./routes/posts')
 const userRoutes = require('./routes/user')
+const publicProductCategoryRoutes = require('./routes/public-routes/productCategory')
+const publicProductRoutes = require('./routes/public-routes/product')
+
 //Admin routes import
 const productCategoryRoutes = require('./routes/admin-routes/productCategory')
 const productRoutes = require('./routes/admin-routes/product')
@@ -17,13 +20,13 @@ mongoose.connect(`mongodb+srv://root:${process.env.MONGO_ATLAS_PW}@mean-stack.ot
   console.log('connected to database')
 })
   .catch((e) => {
-    console.log('connection database failed',e)
+    console.log('connection database failed', e)
 
   })
 
 app.use(bodyParser.json())    //parse the incoming data to json
 app.use(bodyParser.urlencoded({ extended: false }))  //get different type of body data
-app.use("/images",express.static(path.join("backend/images")))   //any calls which have /images in it allowed to continue to fetch images from backend
+app.use("/images", express.static(path.join("backend/images")))   //any calls which have /images in it allowed to continue to fetch images from backend
 
 app.use((req, res, next) => {   //Allows cors to send req from client side if client and backend is working on diff servers
   res.setHeader('Access-Control-Allow-Origin', "*")
@@ -34,13 +37,18 @@ app.use((req, res, next) => {   //Allows cors to send req from client side if cl
 })
 
 // Website routes
-app.use('/api/posts',postsRoutes)
-app.use('/api/user',userRoutes)
+app.use('/api/posts', postsRoutes)
+app.use('/api/user', userRoutes)
 
 //Admin routes
-app.use('/api/admin/productCategories',productCategoryRoutes)
-app.use('/api/admin/products',productRoutes)
-app.use('/api/admin/users',adminUserRoutes)
+app.use('/api/admin/productCategories', productCategoryRoutes)
+app.use('/api/admin/products', productRoutes)
+app.use('/api/admin/users', adminUserRoutes)
+
+//Public Routes
+app.use('/api/productCategories', publicProductCategoryRoutes)
+app.use('/api/products', publicProductRoutes)
+
 
 
 module.exports = app
